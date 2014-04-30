@@ -7,12 +7,14 @@
 
 #ifndef UARTCOMMUNICATIONHANDLER_HPP_
 #define UARTCOMMUNICATIONHANDLER_HPP_
-using namespace std;
+
 #include <vector>
 #include <string>
-
-#define BUFF_SIZE 256
 #include "communication/ICommunicationHandler.hpp"
+
+using namespace std;
+#define BUFF_SIZE 256
+
 class UartCommunicationHandler : public ICommunicationHandler {
 
 private:

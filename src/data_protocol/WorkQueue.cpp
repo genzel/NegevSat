@@ -8,6 +8,7 @@
 #include "WorkQueue.hpp"
 #include <algorithm>
 #include <assert.h>
+#include <iostream>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ WorkQueue::WorkQueue(){
 	// create semaphore with 1 permit
 	status = rtems_semaphore_create(
 			rtems_build_name( 'W', 'K', 'Q', '1' ),
-			1,  /* created locked */
+			1,   /*created locked*/
 			RTEMS_DEFAULT_ATTRIBUTES,
 			0,
 			&mutex_id
@@ -28,7 +29,7 @@ WorkQueue::WorkQueue(){
 	assert( status == RTEMS_SUCCESSFUL );
 	status = rtems_semaphore_create(
 			rtems_build_name( 'W', 'K', 'Q', '2' ),
-			0,  /* created locked */
+			0,   /*created locked*/
 			RTEMS_DEFAULT_ATTRIBUTES,
 			0,
 			&produced_count_id
@@ -41,8 +42,9 @@ void WorkQueue::sortWorks(){
 }
 
 void WorkQueue::enqueue(WorkDescription::WorkDescription work){
+	cout << "y1yy" << endl;
 	rtems_status_code status;
-	/* Semaphore not available, ensured to block */
+	// Semaphore not available, ensured to block
 	status = rtems_semaphore_obtain(
 			mutex_id,
 			RTEMS_DEFAULT_OPTIONS,

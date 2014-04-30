@@ -66,6 +66,6 @@ void TLMParser::addSampleToPacket(Sample::Sample& sample){
 
 string TLMParser::packetToString(){
 	string xml_as_string;
-	print(back_inserter(xml_as_string),root);
-	return xml_as_string;
+	//print(back_inserter(xml_as_string),root);
+	return "sadasa";
 }

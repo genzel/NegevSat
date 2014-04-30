@@ -1,9 +1,12 @@
 /*
- * ICommunicationHandler.cpp
+ * ICommunicationHandler.hpp
  *
  *  Created on: Apr 8, 2014
  *      Author: Genzel
  */
+
+#ifndef ICOMMUNICATIONHANDLER_HPP_
+#define ICOMMUNICATIONHANDLER_HPP_
 
 class ICommunicationHandler
 {
@@ -13,3 +16,5 @@ public:
   virtual bool verifyBytes() = 0;
   virtual ~ICommunicationHandler() { }
 };
+
+#endif /* ICOMMUNICATIONHANDLER_HPP_ */

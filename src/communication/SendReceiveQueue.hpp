@@ -13,6 +13,8 @@ using namespace std;
 #include <queue>
 #include <string>
 #include <rtems.h>
+#include <iostream>
+#include <rtems++/rtemsSemaphore.h>
 
 class SendReceiveQueue {
 
@@ -20,6 +22,7 @@ private:
 	queue<string> pending_messages;
 	rtems_id mutex_id;
 	rtems_id produced_count_id;
+	//rtemsSemaphore::rtemsSemaphore* sem;
 public:
 	SendReceiveQueue ();
 	~SendReceiveQueue(){}
