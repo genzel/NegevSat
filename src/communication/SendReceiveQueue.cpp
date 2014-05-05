@@ -15,20 +15,12 @@ SendReceiveQueue::SendReceiveQueue(){
 	// create semaphore with 1 permit
 	status = rtems_semaphore_create(
 			rtems_build_name( 'S', 'R', 'Q', '1' ),
-			1,  /* created locked */
+			1,
 			RTEMS_DEFAULT_ATTRIBUTES,
 			0,
 			&mutex_id
 	);
 
-	/*rtemsSemaphore::WaitMode mode;
-	rtemsSemaphore::Type type;
-	rtemsSemaphore::Priority priority;
-	rtemsSemaphore::Ceiling ceiling;
-	rtemsSemaphore::Scope scope;
-	const uint32_t counter =1 ;
-
-	sem = new rtemsSemaphore::rtemsSemaphore("mutx",scope,0,counter,mode,type,priority,ceiling);*/
 	assert( status == RTEMS_SUCCESSFUL );
 	status = rtems_semaphore_create(
 				rtems_build_name( 'S', 'R', 'Q', '2' ),

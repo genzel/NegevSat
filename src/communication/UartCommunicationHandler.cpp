@@ -27,7 +27,7 @@ UartCommunicationHandler::UartCommunicationHandler(){
 
 void UartCommunicationHandler::send(char* buffer, int length){
 
-	cout << "*** openning uart ***\n";
+	printf ("*** openning uart ***\n");
 
 	int fd = open("/dev/console_b", O_RDWR /*| O_NOCTTY | _FNDELAY*/);
 
@@ -36,7 +36,7 @@ void UartCommunicationHandler::send(char* buffer, int length){
 	int numBytes = write(fd, buffer, length);
 
 	if (numBytes < 0) {
-		cout << "\nFailed to send from COM1!\n";
+		printf ("\nFailed to send from COM1!\n");
 		//TODO: add exception handling
 	}
 	close(fd);
@@ -46,18 +46,18 @@ void UartCommunicationHandler::send(char* buffer, int length){
 void UartCommunicationHandler::receive(){
 	int numBytes = 0;
 	char buffer[BUFF_SIZE];
-	cout << "*** openning uart ***\n";
+	printf ("*** openning uart ***\n");
 	int fd = open("/dev/console_b", O_RDWR /*| O_NOCTTY | _FNDELAY*/);
-	cout << "\nOpened COM1, fd=" << fd << "\n\n";
+	printf ("\nOpened COM1, fd=%d\n", fd);
 	numBytes = read(fd,buffer,BUFF_SIZE);
 	if (numBytes < 0) {
-		cout << "read error!!!";
+		printf ("read error!!!\n");
 		// TODO exception handling
 	}
 	close(fd);
-	cout << buffer;
+	//cout << buffer;
 	string data(buffer, numBytes);
-	cout << "pushing to input this data: " << data;
+	printf ("pushing to input this data: %s\n",&data[0]);
 	input.push_back(data);
 }
 

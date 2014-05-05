@@ -8,7 +8,7 @@
 #include "TLMParser.hpp"
 #include "third_party/rapidxml.hpp"
 #include "third_party/rapidxml_print.hpp"
-#include <iostream>
+
 #include <sstream>
 #include "Sample.hpp"
 
@@ -66,6 +66,6 @@ void TLMParser::addSampleToPacket(Sample::Sample& sample){
 
 string TLMParser::packetToString(){
 	string xml_as_string;
-	//print(back_inserter(xml_as_string),root);
-	return "sadasa";
+	print(back_inserter(xml_as_string),root);
+	return xml_as_string;
 }

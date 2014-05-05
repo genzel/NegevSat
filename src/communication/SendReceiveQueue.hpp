@@ -13,7 +13,6 @@ using namespace std;
 #include <queue>
 #include <string>
 #include <rtems.h>
-#include <iostream>
 #include <rtems++/rtemsSemaphore.h>
 
 class SendReceiveQueue {

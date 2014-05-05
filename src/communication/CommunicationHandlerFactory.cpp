@@ -7,7 +7,7 @@
 
 #include <communication/CommunicationHandlerFactory.hpp>
 #include <communication/UartCommunicationHandler.hpp>
-#include <iostream>
+#include <stdio.h>
 
 CommunicationHandlerFactory::CommunicationHandlerFactory() {
 	// TODO Auto-generated constructor stub
@@ -24,7 +24,7 @@ ICommunicationHandler::ICommunicationHandler* CommunicationHandlerFactory::creat
 		return handler;
 	}
 	else {
-		cout << "ERROR::No such communication handler";
+		printf ("ERROR::No such communication handler\n");
 		return 0;
 	}
 }

@@ -11,7 +11,7 @@
 #include "XMLValidator.hpp"
 #include <string>
 #include <vector>
-#include <iostream>
+
 
 using namespace std;
 using namespace rapidxml;
@@ -24,7 +24,7 @@ void XMLValidator::buildPacket(const string& packet){
 	vector<char> xml_copy(packet.begin(), packet.end());
 	xml_copy.push_back('\0');
 	root.parse<parse_declaration_node | parse_no_data_nodes>(&xml_copy[0]);
-	cout << root << endl;
+	//cout << root << endl;
 }
 
 bool XMLValidator::validate(){

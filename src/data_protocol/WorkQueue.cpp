@@ -8,7 +8,7 @@
 #include "WorkQueue.hpp"
 #include <algorithm>
 #include <assert.h>
-#include <iostream>
+
 
 using namespace std;
 
@@ -42,7 +42,6 @@ void WorkQueue::sortWorks(){
 }
 
 void WorkQueue::enqueue(WorkDescription::WorkDescription work){
-	cout << "y1yy" << endl;
 	rtems_status_code status;
 	// Semaphore not available, ensured to block
 	status = rtems_semaphore_obtain(

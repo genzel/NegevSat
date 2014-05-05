@@ -26,7 +26,7 @@
                                            RTEMS_NO_TIMESLICE | \
                                            RTEMS_NO_ASR | \
                                            RTEMS_INTERRUPT_LEVEL(0))
-*/
+ */
 
 /*
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
@@ -34,34 +34,35 @@
 #define CONFIGURE_MAXIMUM_TASKS            20
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_EXTRA_TASK_STACKS 		(3* RTEMS_MINIMUM_STACK_SIZE)
-*/
+ */
 #define CONFIGURE_INIT
-
+#define TEST_AMOUNT 20
 /* configuration information */
+#define CONFIGURE_INIT_TASK_INITIAL_MODES (RTEMS_PREEMPT | \
+                                           RTEMS_TIMESLICE | \
+                                           RTEMS_NO_ASR | \
+                                           RTEMS_INTERRUPT_LEVEL(0))
 
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-
-#define CONFIGURE_MAXIMUM_TASKS               8
-#define CONFIGURE_MAXIMUM_TIMERS              1
-#define CONFIGURE_MAXIMUM_SEMAPHORES          8
-#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES      1
-#define CONFIGURE_MAXIMUM_PARTITIONS          1
-#define CONFIGURE_MAXIMUM_REGIONS             1
-#define CONFIGURE_MAXIMUM_PERIODS             1
-#define CONFIGURE_MAXIMUM_USER_EXTENSIONS     0
+#define CONFIGURE_MAXIMUM_PORTS				  TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_TASKS               TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_TIMERS              TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_SEMAPHORES          TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES      TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_PARTITIONS          TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_REGIONS             TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_PERIODS             TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_USER_EXTENSIONS     TEST_AMOUNT
 #define CONFIGURE_TICKS_PER_TIMESLICE       100
-#define CONFIGURE_MAXIMUM_POSIX_MUTEXES       8
+#define CONFIGURE_MAXIMUM_POSIX_MUTEXES       TEST_AMOUNT
 
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_INIT_TASK_STACK_SIZE      (4 * RTEMS_MINIMUM_STACK_SIZE)
-
 #define CONFIGURE_EXTRA_TASK_STACKS         (13 * RTEMS_MINIMUM_STACK_SIZE)
 
 #include <rtems/confdefs.h>
 
-#include <tmacros.h>
-#include <iostream>
 #include "communication/UartCommunicationHandler.hpp"
 #include "communication/SendReceiveQueue.hpp"
 #include "third_party/rapidxml.hpp"
@@ -73,8 +74,8 @@
 #include "data_protocol/Sample.hpp"
 #include "logics/tasks/SendTask.hpp"
 
-
-
+#include "logics/tasks/MPTask.hpp"
+#include <stdio.h>
 using namespace std;
 using namespace rapidxml;
 
@@ -91,12 +92,12 @@ using namespace rapidxml;
 
 extern "C"
 {
-  rtems_task Init(
-    rtems_task_argument argument
-    );
+rtems_task Init(
+		rtems_task_argument argument
+);
 }
 
-//int main() {
+
 rtems_task Init(rtems_task_argument )
 {
 	/*UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
@@ -116,26 +117,51 @@ rtems_task Init(rtems_task_argument )
 	CMDParser::CMDParser parser;
 	vector<WorkDescription::WorkDescription> works = parser.parsePacket(validator.getRoot());*/
 	//traverse_xml(xml);
+
+	MPTask::MPTask task;
+	SendReceiveQueue::SendReceiveQueue send;
+	SendTask::SendTask sendTask(&send);
+
 	TLMParser::TLMParser parser;
 	parser.createPacket("operational");
-	//cout << parser.packetToString() << endl;
+	printf("%s\n",&parser.packetToString()[0]);
 	Sample::Sample sample("Temperature", "122");
 	map<const char*,const char*> measure;
 	measure.insert(pair<const char*,const char*>("voltage", "12"));
 	measure.insert(pair<const char*,const char*>("current", "1"));
 	sample.addMeasure("Battery1", measure);
 	parser.addSampleToPacket(sample);
-	//cout << parser.packetToString();
+	printf("%s\n",&parser.packetToString()[0]);
 
-	SendReceiveQueue::SendReceiveQueue send;
 	send.enqueue(parser.packetToString());
-	SendTask::SendTask sendTask(&send);
-	printf("create\n");
-	sendTask.create("TA1 ", 0, RTEMS_MINIMUM_STACK_SIZE);
-	sendTask.restart(0);
-	printf("start\n");
-	sendTask.start(0xDEADDEAD);
 
+	printf( "INIT - Task.create() - " );
+
+	task.create("MPT ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0,0);
+	printf("%s\n", task.last_status_string());
+
+	printf( "INIT - Task.start() - " );
+	task.start(0xDEADDEAD);
+	printf("%s\n", task.last_status_string());
+
+
+
+
+	printf( "INIT - SendTask.create() - " );
+	sendTask.create("ST1 ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
+	printf("%s\n", sendTask.last_status_string());
+
+	printf( "INIT - SendTask.start() - " );
+	sendTask.start(0xDEADDEAD);
+	printf("%s\n", sendTask.last_status_string());
+
+
+
+	printf("INIT - Destroy it's self\n");
+	//rtems_task_wake_after(10000);
+	rtems_status_code status  = rtems_task_delete( RTEMS_SELF );
+	printf("rtems returned with %d\n", status);
+	exit(1);
 	//return 0;
 }
 
