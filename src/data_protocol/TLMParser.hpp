@@ -12,21 +12,23 @@
 #include "third_party/rapidxml.hpp"
 #include "Sample.hpp"
 #include <string>
+#include "TempPacket.hpp"
 
 using namespace std;
 using namespace rapidxml;
 
 class TLMParser {
 private:
-	xml_document<> root;
-	xml_node<>* sampling_node;
+
+	vector<TempPacket::TempPacket*> packets;
 
 public:
 	TLMParser ();
 	~TLMParser(){}
-	void createPacket(const char* state);
-	void addSampleToPacket(Sample::Sample& sample);
-	string packetToString();
+	void createPacket(const char* state, const char* type);
+	void addSampleToPacket(Sample::Sample& sample,const char* type);
+	TempPacket::TempPacket* getPacket(const char* type);
+	void removePacket(const char* type);
 };
 
 #endif /* TLMPARSER_HPP_ */

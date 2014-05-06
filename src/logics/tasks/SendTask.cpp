@@ -9,7 +9,6 @@
 #include "communication/CommunicationHandlerFactory.hpp"
 #include <stdio.h>
 #include <stdlib.h>
-#include "EndTask.hpp"
 #include <rtems++/rtemsEvent.h>
 
 /*

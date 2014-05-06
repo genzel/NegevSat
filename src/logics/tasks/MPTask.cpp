@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "EndTask.hpp"
 #include <rtems++/rtemsEvent.h>
 
 /*

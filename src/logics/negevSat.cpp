@@ -39,9 +39,9 @@
 #define TEST_AMOUNT 20
 /* configuration information */
 #define CONFIGURE_INIT_TASK_INITIAL_MODES (RTEMS_PREEMPT | \
-                                           RTEMS_TIMESLICE | \
-                                           RTEMS_NO_ASR | \
-                                           RTEMS_INTERRUPT_LEVEL(0))
+		RTEMS_TIMESLICE | \
+		RTEMS_NO_ASR | \
+		RTEMS_INTERRUPT_LEVEL(0))
 
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
@@ -79,17 +79,6 @@
 using namespace std;
 using namespace rapidxml;
 
-/*void traverse_xml(const std::string& xml)
-{
-	xml_document<> doc;
-	vector<char> xml_copy(xml.begin(), xml.end());
-	xml_copy.push_back('\0');
-	doc.parse<parse_declaration_node | parse_no_data_nodes>(&xml_copy[0]);
-	cout << doc;
-	CMDParser::CMDParser parser;
-	parser.parsePacket(&doc);
-}*/
-
 extern "C"
 {
 rtems_task Init(
@@ -100,40 +89,44 @@ rtems_task Init(
 
 rtems_task Init(rtems_task_argument )
 {
-	/*UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
-	ICommunicationHandler::ICommunicationHandler*  ch =  &uart;
-	ch->receive();*/
-
-	/*char xml[] = "<?xml version='1.0'?>"
-	"<packet>"
-		"<upstreamPacket time='12332'>"
-			"<mission opcode='5' priority='3'/>"
-			"<mission opcode='4' priority='2'/>"
-			"<mission opcode='2' priority='1'/>"
-		"</upstreamPacket>"
-	"</packet>";
-	XMLValidator::XMLValidator validator;
-	validator.buildPacket(xml);
-	CMDParser::CMDParser parser;
-	vector<WorkDescription::WorkDescription> works = parser.parsePacket(validator.getRoot());*/
-	//traverse_xml(xml);
 
 	MPTask::MPTask task;
 	SendReceiveQueue::SendReceiveQueue send;
 	SendTask::SendTask sendTask(&send);
 
 	TLMParser::TLMParser parser;
-	parser.createPacket("operational");
-	printf("%s\n",&parser.packetToString()[0]);
-	Sample::Sample sample("Temperature", "122");
-	map<const char*,const char*> measure;
-	measure.insert(pair<const char*,const char*>("voltage", "12"));
-	measure.insert(pair<const char*,const char*>("current", "1"));
-	sample.addMeasure("Battery1", measure);
-	parser.addSampleToPacket(sample);
-	printf("%s\n",&parser.packetToString()[0]);
+	parser.createPacket("operational", "Static");
+	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
+	//printf("%s\n",&parser.packetToString()[0]);
 
-	send.enqueue(parser.packetToString());
+	Sample::Sample sample("Module", "122");
+	map<const char*,const char*> measure;
+	measure.insert(pair<const char*,const char*>("name", "X"));
+	measure.insert(pair<const char*,const char*>("status", "OK"));
+	sample.addMeasure("Info", measure);
+
+	Sample::Sample sample2("Module", "124");
+	map<const char*,const char*> measure2;
+	measure2.insert(pair<const char*,const char*>("name", "Y"));
+	measure2.insert(pair<const char*,const char*>("status", "CRIT"));
+	sample2.addMeasure("Info", measure2);
+
+	parser.addSampleToPacket(sample, "Static");
+	parser.addSampleToPacket(sample2, "Static");
+	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
+
+	send.enqueue(&parser.getPacket("Static")->packetToString()[0]);
+
+	parser.createPacket("", "Energy");
+	Sample::Sample sample3("EnergySample", "144");
+	map<const char*,const char*> measure3;
+	measure3.insert(pair<const char*,const char*>("voltage", "2"));
+	measure3.insert(pair<const char*,const char*>("current", "3"));
+	sample3.addMeasure("Battery1", measure3);
+	parser.addSampleToPacket(sample3, "Energy");
+	printf("%s\n",&parser.getPacket("Energy")->packetToString()[0]);
+
+
 
 	printf( "INIT - Task.create() - " );
 
@@ -143,9 +136,6 @@ rtems_task Init(rtems_task_argument )
 	printf( "INIT - Task.start() - " );
 	task.start(0xDEADDEAD);
 	printf("%s\n", task.last_status_string());
-
-
-
 
 	printf( "INIT - SendTask.create() - " );
 	sendTask.create("ST1 ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
@@ -162,7 +152,6 @@ rtems_task Init(rtems_task_argument )
 	rtems_status_code status  = rtems_task_delete( RTEMS_SELF );
 	printf("rtems returned with %d\n", status);
 	exit(1);
-	//return 0;
 }
 
 

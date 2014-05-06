@@ -1,4 +1,18 @@
-#include "communication/UartCommunicationHandler.hpp"
+/*
+ * UartCommunicationHandlerTests.hpp
+ *
+ *  Created on: May 6, 2014
+ *      Author: dariaz
+ */
 
-int uartCommunicationHandlerSendTest();
-int uartCommunicationHandlerReceiveTest();
+#ifndef UARTCOMMUNICATIONHANDLERTESTS_HPP_
+#define UARTCOMMUNICATIONHANDLERTESTS_HPP_
+
+class UartCommunicationHandlerTests {
+public:
+	UartCommunicationHandlerTests();
+	virtual ~UartCommunicationHandlerTests();
+	void runTests();
+};
+
+#endif /* UARTCOMMUNICATIONHANDLERTESTS_HPP_ */

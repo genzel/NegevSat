@@ -1,0 +1,21 @@
+/*
+ * CMDDictionary.hpp
+ *
+ *  Created on: May 6, 2014
+ *      Author: dariaz
+ */
+
+#ifndef CMDDICTIONARY_HPP_
+#define CMDDICTIONARY_HPP_
+
+
+#define MOVE_TO_SAFE			1
+#define MOVE_TO_STANDBY			2
+#define MOVE_TO_OP				3
+#define FORMAT_ENERGY			4
+#define FORMAT_TEMP				5
+#define FORMAT_STATIC			6
+#define FORMAT_MIXED			7
+
+
+#endif /* CMDDICTIONARY_HPP_ */

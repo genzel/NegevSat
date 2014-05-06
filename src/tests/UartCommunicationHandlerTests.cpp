@@ -1,35 +1,36 @@
-// communicationHandler Unit Tests
+/*
+ * UartCommunicationHandlerTests.cpp
+ *
+ *  Created on: May 6, 2014
+ *      Author: dariaz
+ */
 
-#define CONFIGURE_MAXIMUM_SEMAPHORES    2
+#include <tests/UartCommunicationHandlerTests.hpp>
 
-#include <iostream>
-#include <string>
+UartCommunicationHandlerTests::UartCommunicationHandlerTests() {
+	// TODO Auto-generated constructor stub
 
-/*int uartCommunicationHandlerSendTest() {
-	
-	UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
-	ICommunicationHandler::ICommunicationHandler*  ch =  &uart;
-	char buffer[3];
-	buffer[0] = 'b';
-	buffer[1] = 'a';
-	buffer[2] = '\0';
-	
-	ch->send(buffer, 3);
-	
-	return 0;
 }
 
-int uartCommunicationHandlerReceiveTest() {
-	
-	UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
-	ICommunicationHandler::ICommunicationHandler*  ch =  &uart;
-	char buffer[256];
-	string receivedString;
-	
-	ch->receive();
-	
-	receivedString = getInput();
-	cout << "received data is : " << receivedString << "\n";
-	
-	return 0;
-}*/
+UartCommunicationHandlerTests::~UartCommunicationHandlerTests() {
+	// TODO Auto-generated destructor stub
+}
+
+void UartCommunicationHandlerTests::runTests(){
+	/*UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
+		ICommunicationHandler::ICommunicationHandler*  ch =  &uart;
+		ch->receive();*/
+
+		/*char xml[] = "<?xml version='1.0'?>"
+		"<packet>"
+			"<upstreamPacket time='12332'>"
+				"<mission opcode='5' priority='3'/>"
+				"<mission opcode='4' priority='2'/>"
+				"<mission opcode='2' priority='1'/>"
+			"</upstreamPacket>"
+		"</packet>";
+		XMLValidator::XMLValidator validator;
+		validator.buildPacket(xml);
+		CMDParser::CMDParser parser;
+		vector<WorkDescription::WorkDescription> works = parser.parsePacket(validator.getRoot());*/
+}
