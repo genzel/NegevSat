@@ -23,8 +23,8 @@ public:
 	UartCommunicationHandler ();
 	~UartCommunicationHandler(){}
 	void send(char* buffer, int length);
-	void receive();
-	bool verifyBytes();
+	string receive();
+	bool verifyBytes(string msg);
 };
 
 

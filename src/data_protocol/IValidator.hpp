@@ -16,8 +16,9 @@ class IValidator
 {
 public:
   virtual void buildPacket(const string& packet) = 0;
+  virtual void* getRoot() = 0;
   virtual bool validate() = 0;
-/*  virtual ~IValidator();*/
+  virtual ~IValidator(){}
 };
 
 #endif /* IVALIDATOR_HPP_ */

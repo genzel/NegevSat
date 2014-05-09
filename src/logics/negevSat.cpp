@@ -6,35 +6,6 @@
 // Description : NegevSat Airborne system
 //============================================================================
 
-
-
-
-
-/*
-#define CONFIGURE_EXECUTIVE_RAM_SIZE        (512*1024)
-#define CONFIGURE_MAXIMUM_SEMAPHORES        20
-#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES    20
-
-
-#define CONFIGURE_MICROSECONDS_PER_TICK    10000
-#define CONFIGURE_LIBIO_MAXIMUM_FILE_DESCRIPTORS 50
-#define CONFIGURE_USE_IMFS_AS_BASE_FILESYSTEM
-
-#define CONFIGURE_INIT_TASK_STACK_SIZE    (10*1024)
-#define CONFIGURE_INIT_TASK_PRIORITY    50
-#define CONFIGURE_INIT_TASK_INITIAL_MODES (RTEMS_PREEMPT | \
-                                           RTEMS_NO_TIMESLICE | \
-                                           RTEMS_NO_ASR | \
-                                           RTEMS_INTERRUPT_LEVEL(0))
- */
-
-/*
-#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
-#define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-#define CONFIGURE_MAXIMUM_TASKS            20
-#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
-#define CONFIGURE_EXTRA_TASK_STACKS 		(3* RTEMS_MINIMUM_STACK_SIZE)
- */
 #define CONFIGURE_INIT
 #define TEST_AMOUNT 20
 /* configuration information */
@@ -73,11 +44,15 @@
 #include "data_protocol/TLMParser.hpp"
 #include "data_protocol/Sample.hpp"
 #include "logics/tasks/SendTask.hpp"
-
+#include "logics/tasks/CMDTask.hpp"
 #include "logics/tasks/MPTask.hpp"
 #include <stdio.h>
+#include <rtems++/rtemsEvent.h>
+#include "utils/stringutils.hpp"
+
 using namespace std;
 using namespace rapidxml;
+using namespace stringutils;
 
 extern "C"
 {
@@ -86,13 +61,18 @@ rtems_task Init(
 );
 }
 
-
 rtems_task Init(rtems_task_argument )
 {
+	SendReceiveQueue::SendReceiveQueue* receive_q = new SendReceiveQueue();
+	SendReceiveQueue::SendReceiveQueue* send_q = new SendReceiveQueue();
 
-	MPTask::MPTask task;
-	SendReceiveQueue::SendReceiveQueue send;
-	SendTask::SendTask sendTask(&send);
+	WorkQueue::WorkQueue* work_queue = new WorkQueue();
+	WorkQueue::WorkQueue* rdy_work_queue = new WorkQueue();
+
+	MPTask::MPTask task(receive_q, work_queue);
+	SendReceiveQueue::SendReceiveQueue** send;
+
+	SendTask::SendTask sendTask(send);
 
 	TLMParser::TLMParser parser;
 	parser.createPacket("operational", "Static");
@@ -115,27 +95,35 @@ rtems_task Init(rtems_task_argument )
 	parser.addSampleToPacket(sample2, "Static");
 	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
 
-	send.enqueue(&parser.getPacket("Static")->packetToString()[0]);
+	//send.enqueue(&parser.getPacket("Static")->packetToString()[0]);
 
 	parser.createPacket("", "Energy");
 	Sample::Sample sample3("EnergySample", "144");
 	map<const char*,const char*> measure3;
-	measure3.insert(pair<const char*,const char*>("voltage", "2"));
-	measure3.insert(pair<const char*,const char*>("current", "3"));
+	int x = 2;
+	int y = 3;
+	/*char* z = int_to_chars(x,z);
+	char* l = int_to_chars(y,l);
+	printf("x = %s\n",z);
+	printf("y = %s\n",l);*/
+	string v = "asd";
+	string c = "asd";
+	v = int_to_string(x , v);
+	measure3.insert(pair<const char*,const char*>("voltage", v.c_str()));
+	c = int_to_string(y , c);
+	measure3.insert(pair<const char*,const char*>("current", c.c_str()));
 	sample3.addMeasure("Battery1", measure3);
 	parser.addSampleToPacket(sample3, "Energy");
 	printf("%s\n",&parser.getPacket("Energy")->packetToString()[0]);
 
 
-
-	printf( "INIT - Task.create() - " );
-
+	/*printf( "INIT - Task.create() - " );
 	task.create("MPT ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0,0);
 	printf("%s\n", task.last_status_string());
 
 	printf( "INIT - Task.start() - " );
 	task.start(0xDEADDEAD);
-	printf("%s\n", task.last_status_string());
+	printf("%s\n", task.last_status_string());*/
 
 	printf( "INIT - SendTask.create() - " );
 	sendTask.create("ST1 ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
@@ -145,6 +133,10 @@ rtems_task Init(rtems_task_argument )
 	sendTask.start(0xDEADDEAD);
 	printf("%s\n", sendTask.last_status_string());
 
+	rtemsEvent send_event;
+	rtems_event_set out = TEMP_SEND;
+	//rtems_status_code status = send_event.send(sendTask,out);
+	//printf("rtems send event returned with %d\n", status);
 
 
 	printf("INIT - Destroy it's self\n");

@@ -8,12 +8,15 @@
 #ifndef ICOMMUNICATIONHANDLER_HPP_
 #define ICOMMUNICATIONHANDLER_HPP_
 
+#include <string>
+using namespace std;
+
 class ICommunicationHandler
 {
 public:
   virtual void send(char* buffer, int length) = 0;
-  virtual void receive() = 0;
-  virtual bool verifyBytes() = 0;
+  virtual string receive() = 0;
+  virtual bool verifyBytes(string msg) = 0;
   virtual ~ICommunicationHandler() { }
 };
 

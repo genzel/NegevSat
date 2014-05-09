@@ -32,6 +32,6 @@ bool XMLValidator::validate(){
 	return true;
 }
 
-xml_document<>* XMLValidator::getRoot(){
+void* XMLValidator::getRoot(){
 	return &root;
 }

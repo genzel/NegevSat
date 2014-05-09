@@ -8,12 +8,12 @@
 #ifndef SENDRECEIVEQUEUE_HPP_
 #define SENDRECEIVEQUEUE_HPP_
 
-using namespace std;
-
 #include <queue>
 #include <string>
 #include <rtems.h>
 #include <rtems++/rtemsSemaphore.h>
+
+using namespace std;
 
 class SendReceiveQueue {
 

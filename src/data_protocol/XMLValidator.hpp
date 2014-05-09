@@ -22,7 +22,7 @@ public:
 	~XMLValidator(){}
 	void buildPacket(const string& packet);
 	bool validate();
-	xml_document<>* getRoot();
+	void* getRoot();
 };
 
 #endif /* XMLVALIDATOR_HPP_ */

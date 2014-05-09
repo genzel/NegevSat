@@ -12,20 +12,25 @@
 #include "communication/UartCommunicationHandler.hpp"
 #include <rtems++/rtemsTask.h>
 
+#define STATIC_SEND 		RTEMS_EVENT_1
+#define ENERGY_SEND 		RTEMS_EVENT_2
+#define TEMP_SEND 			RTEMS_EVENT_3
+#define MIXED_SEND 			RTEMS_EVENT_4
+
 
 class SendTask : public rtemsTask
 {
 private:
 	ICommunicationHandler::ICommunicationHandler* comm_handler;
-	SendReceiveQueue::SendReceiveQueue* sendQueue;
-
+	SendReceiveQueue::SendReceiveQueue** sendQueues;
+	int send_type;
 protected:
 	virtual void body(rtems_task_argument argument);
 
 public:
-	SendTask(SendReceiveQueue::SendReceiveQueue* sendQ);
+	SendTask(SendReceiveQueue::SendReceiveQueue** sendQ);
 	void send(string packet);
-	string dequeueMessage();
+	string dequeueMessage(int index);
 };
 #endif /* SENDTASK_HPP_ */
 

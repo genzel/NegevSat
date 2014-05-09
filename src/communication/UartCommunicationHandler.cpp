@@ -43,7 +43,7 @@ void UartCommunicationHandler::send(char* buffer, int length){
 }
 
 //TODO receive until a specific char arrived
-void UartCommunicationHandler::receive(){
+string UartCommunicationHandler::receive(){
 	int numBytes = 0;
 	char buffer[BUFF_SIZE];
 	printf ("*** openning uart ***\n");
@@ -58,10 +58,10 @@ void UartCommunicationHandler::receive(){
 	//cout << buffer;
 	string data(buffer, numBytes);
 	printf ("pushing to input this data: %s\n",&data[0]);
-	input.push_back(data);
+	return data;
 }
 
-bool UartCommunicationHandler::verifyBytes(){
+bool UartCommunicationHandler::verifyBytes(string msg){
 	return true;
 }
 
