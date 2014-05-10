@@ -22,29 +22,22 @@ char* int_to_chars(int number, char* buf){
 	return buf;
 }
 
-string state_to_string (int state){
-	string state_str;
+const char* state_to_chars (int state){
 	switch (state){
 	case INIT_STATE:
-		state_str = "INIT_STATE";
-		break;
+		return INIT_STATE_STR;
 	case STANDBY_STATE:
-		state_str = "STANDBY_STATE";
-		break;
+		return STANDBY_STATE_STR;
 	case SAFE_STATE:
-		state_str = "SAFE_STATE";
-		break;
+		return SAFE_STATE_STR;
 	case REGULAR_OPS_STATE:
-		state_str = "OPERATIONAL_STATE";
-		break;
+		return REGULAR_OPS_STATE_STR;
 	case FACING_GROUND_STATE:
-		state_str = "OPERATIONAL_STATE";
-		break;
+		return FACING_GROUND_STATE_STR;
 	default:
 		printf("ILLEGAL STATE");
-		state_str = "UNKNOWN_STATE";
+		return "ILLEGAL_STATE";
 	}
-	return state_str;
 }
 
 }

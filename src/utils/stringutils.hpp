@@ -21,8 +21,9 @@ namespace stringutils{
 #define str_to_chars(str) &str[0]
 
 string int_to_string(int number, string str);
-string state_to_string (int state);
-char* int_to_chars(int number, char* buf);
+const char* state_to_chars (int state);
+
+
 }
 
 #endif /* STRINGUTILS_HPP_ */

@@ -9,7 +9,7 @@
 #include <sstream>
 #include "third_party/rapidxml_print.hpp"
 
-TempPacket::TempPacket(const char* _type) {
+TempPacket::TempPacket(string _type) {
 	type = _type;
 }
 
@@ -18,7 +18,7 @@ TempPacket::~TempPacket() {
 }
 
 string TempPacket::packetToString(){
-	string xml_as_string;
+	string xml_as_string = "";
 	print(back_inserter(xml_as_string),root);
 	return xml_as_string;
 }

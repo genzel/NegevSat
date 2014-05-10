@@ -18,12 +18,12 @@ class TempPacket {
 
 private:
 
-	const char* type;
+	string type;
 	xml_document<> root;
 	xml_node<>* sampling_node;
 
 public:
-	TempPacket(const char* _type);
+	TempPacket(string _type);
 
 	xml_document<>* getRoot(){
 		return &root;
@@ -33,7 +33,7 @@ public:
 		sampling_node = node;
 	}
 
-	const char* getType(){
+	string getType(){
 		return type;
 	}
 

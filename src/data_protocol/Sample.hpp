@@ -15,17 +15,17 @@ using namespace std;
 
 class Sample {
 private:
-	const char* name;
-	const char* time;
-	map<const char*,map<const char*,const char*> > measures;
+	string name;
+	string time;
+	map<string,map<string,string> > measures;
 
 public:
-	Sample(const char* _name, const char* time);
+	Sample(string _name, string time);
 	~Sample(){}
-	void addMeasure(const char* name, map<const char*,const char*> values);
-	const char* getName();
-	const char* getTime();
-	map<const char*,map<const char*,const char*> >* getMeasures();
+	void addMeasure(string name, map<string,string> values);
+	string getName();
+	string getTime();
+	map<string,map<string,string> >* getMeasures();
 
 };
 

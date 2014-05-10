@@ -10,30 +10,30 @@
 
 using namespace std;
 
-Sample::Sample(const char* _name, const char* _time){
+Sample::Sample(string _name, string _time){
 	name = _name;
 	time = _time;
 }
 
 /*usage example:
  	Sample::Sample sample("Temperature", "122");
-	map<const char*,const char*> measure;
-	measure.insert(pair<const char*,const char*>("voltage", "12"));
-	measure.insert(pair<const char*,const char*>("current", "1"));
+	map<string,string> measure;
+	measure.insert(pair<string,string>("voltage", "12"));
+	measure.insert(pair<string,string>("current", "1"));
 	sample.addMeasure("Battery1", measure);*/
 
-void Sample::addMeasure(const char* name, map<const char*,const char*> values){
-	measures.insert(pair<const char*,map<const char*,const char*> >(name,values));
+void Sample::addMeasure(string name, map<string,string> values){
+	measures.insert(pair<string,map<string,string> >(name,values));
 }
 
-const char* Sample::getName(){
+string Sample::getName(){
 	return name;
 }
 
-const char* Sample::getTime(){
+string Sample::getTime(){
 	return time;
 }
 
-map<const char*,map<const char*,const char*> >* Sample::getMeasures(){
+map<string,map<string,string> >* Sample::getMeasures(){
 	return &measures;
 }

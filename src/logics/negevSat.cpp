@@ -80,15 +80,15 @@ rtems_task Init(rtems_task_argument )
 	//printf("%s\n",&parser.packetToString()[0]);
 
 	Sample::Sample sample("Module", "122");
-	map<const char*,const char*> measure;
-	measure.insert(pair<const char*,const char*>("name", "X"));
-	measure.insert(pair<const char*,const char*>("status", "OK"));
+	map<string,string> measure;
+	measure.insert(pair<string,string>("name", "X"));
+	measure.insert(pair<string,string>("status", "OK"));
 	sample.addMeasure("Info", measure);
 
 	Sample::Sample sample2("Module", "124");
-	map<const char*,const char*> measure2;
-	measure2.insert(pair<const char*,const char*>("name", "Y"));
-	measure2.insert(pair<const char*,const char*>("status", "CRIT"));
+	map<string,string> measure2;
+	measure2.insert(pair<string,string>("name", "Y"));
+	measure2.insert(pair<string,string>("status", "CRIT"));
 	sample2.addMeasure("Info", measure2);
 
 	parser.addSampleToPacket(sample, "Static");
@@ -99,7 +99,7 @@ rtems_task Init(rtems_task_argument )
 
 	parser.createPacket("", "Energy");
 	Sample::Sample sample3("EnergySample", "144");
-	map<const char*,const char*> measure3;
+	map<string,string> measure3;
 	int x = 2;
 	int y = 3;
 	/*char* z = int_to_chars(x,z);
@@ -109,9 +109,9 @@ rtems_task Init(rtems_task_argument )
 	string v = "asd";
 	string c = "asd";
 	v = int_to_string(x , v);
-	measure3.insert(pair<const char*,const char*>("voltage", v.c_str()));
+	measure3.insert(pair<string,string>("voltage", v));
 	c = int_to_string(y , c);
-	measure3.insert(pair<const char*,const char*>("current", c.c_str()));
+	measure3.insert(pair<string,string>("current", c));
 	sample3.addMeasure("Battery1", measure3);
 	parser.addSampleToPacket(sample3, "Energy");
 	printf("%s\n",&parser.getPacket("Energy")->packetToString()[0]);

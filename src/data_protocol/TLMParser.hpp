@@ -26,9 +26,9 @@ public:
 	TLMParser ();
 	~TLMParser(){}
 	void createPacket(const char* state, const char* type);
-	void addSampleToPacket(Sample::Sample& sample,const char* type);
-	TempPacket::TempPacket* getPacket(const char* type);
-	void removePacket(const char* type);
+	void addSampleToPacket(Sample::Sample& sample,string type);
+	TempPacket::TempPacket* getPacket(string type);
+	void removePacket(string type);
 };
 
 #endif /* TLMPARSER_HPP_ */
