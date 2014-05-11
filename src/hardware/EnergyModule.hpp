@@ -22,8 +22,15 @@ public:
 			current = _current;
 		}
 
-		int getCurrent() {
-			return current;
+		int getCurrent(bool useI2C) {
+			if (useI2C){
+				// will be implemented using read from i2c
+				return current;
+			}
+			else {
+				return current;
+			}
+
 		}
 };
 

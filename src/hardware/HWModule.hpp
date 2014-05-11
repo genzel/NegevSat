@@ -27,8 +27,18 @@ public:
 		value = _value;
 	}
 
-	int getValue(){
-		return value;
+	/**
+	 * Gets the hardware device value, if useI2C is true reads from i2c and sets the cache to the read value
+	 * else, reads from cache.
+	 */
+	int getValue(bool useI2C){
+		if (useI2C){
+			// will be implemented using read from i2c
+			return value;
+		}
+		else {
+			return value;
+		}
 	}
 
 	void setStatus(int _status) {

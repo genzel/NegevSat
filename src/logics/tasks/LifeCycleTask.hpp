@@ -15,6 +15,7 @@
 #include "data_protocol/TLMParser.hpp"
 #include "hardware/HardwareState.hpp"
 #include "data_protocol/Sample.hpp"
+#include "logics/CommandExecutor.hpp"
 #include <string>
 #include <vector>
 
@@ -29,6 +30,7 @@ private:
 	SendReceiveQueue::SendReceiveQueue** send_queues;
 	TLMParser::TLMParser parser;
 	HardwareState::HardwareState hardware;
+	CommandExecutor::CommandExecutor executor;
 	int samples_counter;
 	int state;
 
@@ -39,6 +41,8 @@ public:
 	LifeCycleTask(WorkQueue::WorkQueue* _rdy_works, SendReceiveQueue::SendReceiveQueue** _send_queues);
 	virtual ~LifeCycleTask();
 	void control_unit_samples();
+	void control_algorithmics();
+	void control_command();
 	void attitude_control();
 	void logics();
 	void perform_cmd();

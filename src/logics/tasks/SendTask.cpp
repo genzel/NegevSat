@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <rtems++/rtemsEvent.h>
 #include "logics/SendReceiveConf.hpp"
+#include "logics/Global.hpp"
 
 using namespace std;
 /*

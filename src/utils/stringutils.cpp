@@ -36,6 +36,24 @@ const char* state_to_chars (int state){
 		return FACING_GROUND_STATE_STR;
 	default:
 		printf("ILLEGAL STATE");
+		// TODO throw exception!
+		return "ILLEGAL_STATE";
+	}
+}
+
+const char* module_state_to_chars(int state){
+	switch (state){
+	case MODULE_OK:
+		return OK_STR;
+	case MODULE_CRIT:
+		return CRIT_STR;
+	case MODULE_OFF:
+		return OFF_STR;
+	case MODULE_STANDBY:
+		return STAND_BY_STR;
+	default:
+		printf("ILLEGAL STATE");
+		// TODO throw exception!
 		return "ILLEGAL_STATE";
 	}
 }

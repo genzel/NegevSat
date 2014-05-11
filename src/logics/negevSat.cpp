@@ -49,10 +49,13 @@
 #include <stdio.h>
 #include <rtems++/rtemsEvent.h>
 #include "utils/stringutils.hpp"
-
+#include "logics/Global.hpp"
+#include "CommandExecutor.hpp"
 using namespace std;
 using namespace rapidxml;
 using namespace stringutils;
+
+rtemsTask::rtemsTask* task_table[NUMBER_OF_TASKS];
 
 extern "C"
 {
@@ -73,7 +76,7 @@ rtems_task Init(rtems_task_argument )
 	SendReceiveQueue::SendReceiveQueue** send;
 
 	SendTask::SendTask sendTask(send);
-
+	task_table[SEND_TASK_INDEX] = &sendTask;
 	TLMParser::TLMParser parser;
 	parser.createPacket("operational", "Static");
 	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
@@ -138,6 +141,12 @@ rtems_task Init(rtems_task_argument )
 	//rtems_status_code status = send_event.send(sendTask,out);
 	//printf("rtems send event returned with %d\n", status);
 
+	CommandExecutor::CommandExecutor executor;
+	WorkDescription::WorkDescription work1;
+	work1.setCode(4);
+	work1.setPriority(0);
+	work1.setTimeStamp(111);
+	executor.execute(work1);
 
 	printf("INIT - Destroy it's self\n");
 	//rtems_task_wake_after(10000);

@@ -34,20 +34,20 @@ public:
 		temperature.setValue(value);
 	}
 
-	int getTemperature(){
-		return temperature.getValue();
+	int getTemperature(bool useI2C){
+		return temperature.getValue(useI2C);
 	}
 
 	void setEnergy(int value){
 		energy.setValue(value);
 	}
 
-	int getEnergy(){
-		return energy.getValue();
+	int getEnergy(bool useI2C){
+		return energy.getValue(useI2C);
 	}
 
-	int getEnergyCurrent(){
-		return energy.getCurrent();
+	int getEnergyCurrent(bool useI2C){
+		return energy.getCurrent(useI2C);
 	}
 
 	void setEnergyCurrent(int current){
@@ -58,32 +58,32 @@ public:
 		sband.setValue(value);
 	}
 
-	int getSband(){
-		return sband.getValue();
+	int getSband(bool useI2C){
+		return sband.getValue(useI2C);
 	}
 
 	void setSolarPanels(int value){
 		solar_panels.setValue(value);
 	}
 
-	int getSolarPanels(){
-		return solar_panels.getValue();
+	int getSolarPanels(bool useI2C){
+		return solar_panels.getValue(useI2C);
 	}
 
 	void setPayload(int value){
 		payload.setValue(value);
 	}
 
-	int getPayload(){
-		return payload.getValue();
+	int getPayload(bool useI2C){
+		return payload.getValue(useI2C);
 	}
 
 	void setThermalControl(int value){
 		thermal_control.setValue(value);
 	}
 
-	int getThermalControl(){
-		return thermal_control.getValue();
+	int getThermalControl(bool useI2C){
+		return thermal_control.getValue(useI2C);
 	}
 
 	// end of getters and setters to value

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
-#include "logics/NegevSatStates.hpp"
+#include "logics/NegevSatConstants.hpp"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ namespace stringutils{
 
 string int_to_string(int number, string str);
 const char* state_to_chars (int state);
-
+const char* module_state_to_chars(int state);
 
 }
 
