@@ -21,6 +21,7 @@ LifeCycleTask::LifeCycleTask(WorkQueue::WorkQueue* _rdy_works, SendReceiveQueue:
 	samples_counter = 0;
 	state = INIT_STATE;
 	executor.setHardawre(&hardware);
+	sampler.setHardware(&hardware);
 }
 
 LifeCycleTask::~LifeCycleTask() {
@@ -49,93 +50,33 @@ void LifeCycleTask::control_algorithmics(){
 void LifeCycleTask::control_unit_samples(){
 	printf(" * LifeCycle TASK:: control_unit_samples *\n");
 	//TODO ADD TIMER!!!!!
-	//TODO REFACTOR INTO OBJECT NAMED "SAMPLER"
-
 	if (samples_counter == 0){
 		parser.createPacket("",ENERGY_STR);
 		parser.createPacket("", TEMPERATURE_STR);
 		parser.createPacket(state_to_chars(state),STATIC_STR);
 	}
+	int time = 10;
 	// create energy sample
-	int energy = hardware.getEnergy(true);
-	int current = hardware.getEnergyCurrent(true);
-	Sample::Sample energy_sample(ENERGY_SAMPLE_STR, "122");
-	map<string,string> energy_measure;
-	string energy_str = "";
-	string current_str = "";
-	energy_str = int_to_string(energy,energy_str);
-	current_str = int_to_string(current,current_str);
-	energy_measure.insert(pair<string,string>(VOLTAGE_STR, energy_str));
-	energy_measure.insert(pair<string,string>(CURRENT_STR, current_str));
-	energy_sample.addMeasure(BATTERY1_STR, energy_measure);
+	Sample::Sample energy_sample = sampler.createSample(ENERGY_STR, true, time, HW_ENERGY_MODULE);
 	parser.addSampleToPacket(energy_sample,ENERGY_STR);
-
 	// create temperature sample
-	int temp = hardware.getTemperature(true);
-	Sample::Sample temp_sample(TEMPERATURE_SAMPLE_STR, "122");
-	map<string,string> temp_measure;
-	string temp_str = "";
-	temp_str = int_to_string(temp,temp_str);
-	temp_measure.insert(pair<string,string>(TEMP_STR, temp_str));
-	temp_sample.addMeasure(SENSOR1_STR, temp_measure);
+	Sample::Sample temp_sample = sampler.createSample(TEMPERATURE_STR, true, time, HW_TEMP_MODULE);
 	parser.addSampleToPacket(temp_sample,TEMPERATURE_STR);
 
-	// create static sample
-	int sband_module  = hardware.getSbandStatus();
-	int temp_module = hardware.getTemperatureStatus();
-	int energy_module  = hardware.getEnergyStatus();
-	int solarp_module = hardware.getSolarPanelsStatus();
-	int payload_module  = hardware.getPayloadStatus();
-	int thermal_ctrl_module = hardware.getThermalControlStatus();
+	// create static samples
+	Sample::Sample static_sband_sample = sampler.createSample(STATIC_STR, true, time, HW_SBAND_MODULE);
+	parser.addSampleToPacket(static_sband_sample,STATIC_STR);
+	Sample::Sample static_temp_sample = sampler.createSample(STATIC_STR, true, time, HW_TEMP_MODULE);
+	parser.addSampleToPacket(static_temp_sample,STATIC_STR);
+	Sample::Sample static_energy_sample = sampler.createSample(STATIC_STR, true, time, HW_ENERGY_MODULE);
+	parser.addSampleToPacket(static_energy_sample,STATIC_STR);
+	Sample::Sample static_solarp_sample = sampler.createSample(STATIC_STR, true, time, HW_SOLARP_MODULE);
+	parser.addSampleToPacket(static_solarp_sample,STATIC_STR);
+	Sample::Sample static_payload_sample = sampler.createSample(STATIC_STR, true, time, HW_PAYLOAD_MODULE);
+	parser.addSampleToPacket(static_payload_sample,STATIC_STR);
+	Sample::Sample static_thermal_ctrl_sample = sampler.createSample(STATIC_STR, true, time, HW_TERMAL_CTRL_MODULE);
+	parser.addSampleToPacket(static_thermal_ctrl_sample,STATIC_STR);
 
-	// sband module
-	Sample::Sample sband_sample(MODULE_STR, "122");
-	map<string,string> sband_measure;
-	sband_measure.insert(pair<string,string>(NAME_STR, hardware.getSbandName()));
-	sband_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(sband_module)));
-	sband_sample.addMeasure(INFO_STR, sband_measure);
-	parser.addSampleToPacket(sband_sample,STATIC_STR);
-
-	// temp module
-	Sample::Sample temp_module_sample(MODULE_STR, "122");
-	map<string,string> temp_module_measure;
-	temp_module_measure.insert(pair<string,string>(NAME_STR, hardware.getTemperatureName()));
-	temp_module_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(temp_module)));
-	temp_module_sample.addMeasure(INFO_STR, temp_module_measure);
-	parser.addSampleToPacket(temp_module_sample,STATIC_STR);
-
-	// energy module
-	Sample::Sample energy_module_sample(MODULE_STR, "122");
-	map<string,string> energy_module_measure;
-	energy_module_measure.insert(pair<string,string>(NAME_STR, hardware.getEnergyName()));
-	energy_module_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(energy_module)));
-	energy_module_sample.addMeasure(INFO_STR, energy_module_measure);
-	parser.addSampleToPacket(energy_module_sample,STATIC_STR);
-
-	// solarp module
-	Sample::Sample solarp_sample(MODULE_STR, "122");
-	map<string,string> solarp_measure;
-	solarp_measure.insert(pair<string,string>(NAME_STR, hardware.getSolarPanelsName()));
-	solarp_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(solarp_module)));
-	solarp_sample.addMeasure(INFO_STR, solarp_measure);
-	parser.addSampleToPacket(solarp_sample,STATIC_STR);
-
-	// payload module
-	Sample::Sample payload_sample(MODULE_STR, "122");
-	map<string,string> payload_measure;
-	payload_measure.insert(pair<string,string>(NAME_STR, hardware.getPayloadName()));
-	payload_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(payload_module)));
-	payload_sample.addMeasure(INFO_STR, payload_measure);
-	parser.addSampleToPacket(payload_sample,STATIC_STR);
-
-	// thermal_ctrl module
-	Sample::Sample thermal_ctrl_sample(MODULE_STR, "122");
-	map<string,string> thermal_ctrl_measure;
-	thermal_ctrl_measure.insert(pair<string,string>(NAME_STR, hardware.getThermalControlName()));
-	thermal_ctrl_measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(thermal_ctrl_module)));
-	thermal_ctrl_sample.addMeasure(INFO_STR, thermal_ctrl_measure);
-	parser.addSampleToPacket(thermal_ctrl_sample,STATIC_STR);
-	// END of static sample
 	samples_counter++;
 	// when packets are filled with details push them into the send queues and remove them from
 	// parser to prevent memory leak and keep the invariant that parser always keeps 3 packets ONLY!
@@ -170,11 +111,18 @@ void LifeCycleTask::perform_cmd(){
 
 void LifeCycleTask::monitoring(){
 	printf(" * LifeCycle TASK:: monitoring *\n");
-	int energy = hardware.getEnergy(false);
+	int voltage = hardware.getEnergy(false);
+	int current = hardware.getEnergyCurrent(false);
 	int temp = hardware.getTemperature(false);
 
 	//TODO check the condition of the samples (energy,temp and so on) and if the value is wrong
 	//change something in order to invoke the right handling in the logics stage
+	if (voltage < MIN_PROPER_VOLTAGE || current < MIN_PROPER_CURRENT){
+		hardware.setEnergyStatus(MODULE_MALFUNCTION);
+	}
+	if (temp < MIN_PROPER_TEMPERATURE || temp > MAX_PROPER_TEMPERATURE){
+		hardware.setTemperatureStatus(MODULE_MALFUNCTION);
+	}
 }
 
 void LifeCycleTask::module_ctrl(){

@@ -17,10 +17,10 @@
 #define FORMAT_STATIC			6
 #define FORMAT_MIXED			7
 #define SBAND_ON				8
-#define SBAND_OFF				9
+#define SBAND_STANDBY			9
 #define PAYLOAD_ON				10
-#define PAYLOAD_OFF				11
+#define PAYLOAD_STANDBY			11
 #define THERMAL_CTRL_ON			12
-#define THERMAL_CTRL_OFF		13
+#define THERMAL_CTRL_STANDBY	13
 
 #endif /* CMDDICTIONARY_HPP_ */

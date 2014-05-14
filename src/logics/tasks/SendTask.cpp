@@ -41,6 +41,7 @@ SendTask::SendTask(SendReceiveQueue::SendReceiveQueue** sendQ)
 	CommunicationHandlerFactory::CommunicationHandlerFactory factory;
 	comm_handler = factory.createHandler("uart");
 	send_type = STATIC_SEND;
+	packet_counter = 0;
 }
 
 void SendTask::send(string packet){
@@ -55,6 +56,7 @@ string SendTask::dequeueMessage(int index){
 rtems_task SendTask::body(rtems_task_argument argument){
 	for (;;){
 		printf(" * SEND TASK! *\n");
+		packet_counter++;
 		rtemsEvent send_type_event;
 		rtems_event_set out;
 		rtems_status_code status = send_type_event.receive((STATIC_SEND | ENERGY_SEND | TEMP_SEND | MIXED_SEND), out, 0, rtemsEvent::no_wait, rtemsEvent::any);
@@ -77,17 +79,29 @@ rtems_task SendTask::body(rtems_task_argument argument){
 			printf(" * SEND TASK:: type of send is ENERGY_SEND *\n");
 			/*packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
 			send(packet);*/
+			if (packet_counter == PACKET_COUNTER_LIMIT){
+				packet_counter = 0;
+				/*packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
+				send(packet);*/
+			}
 			break;
 		case TEMP_SEND:
 			printf(" * SEND TASK:: type of send is TEMP_SEND *\n");
 			/*packet = sendQueues[SENDQ_TEMP_INDEX]->dequeue();
 			send(packet);*/
+			if (packet_counter == PACKET_COUNTER_LIMIT){
+				packet_counter = 0;
+				/*packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
+				send(packet);*/
+			}
 			break;
 		case MIXED_SEND:
 			printf(" * SEND TASK:: type of send is MIXED_SEND *\n");
 			/*packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
 			send(packet);
 			packet = sendQueues[SENDQ_TEMP_INDEX]->dequeue();
+			send(packet);
+			packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
 			send(packet);*/
 			break;
 		}

@@ -17,6 +17,7 @@ bool workComparator (WorkDescription::WorkDescription i,WorkDescription::WorkDes
 }
 
 WorkQueue::WorkQueue(){
+	works.reserve(100);
 	rtems_status_code status;
 	// create semaphore with 1 permit
 	status = rtems_semaphore_create(

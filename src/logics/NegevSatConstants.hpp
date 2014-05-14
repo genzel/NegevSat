@@ -37,16 +37,16 @@ static const char REGULAR_OPS_STATE_STR[] = "OPERATIONAL_STATE";
 static const char FACING_GROUND_STATE_STR[] = "OPERATIONAL_STATE";
 
 //satellite modules states enums
-#define MODULE_OK				0
-#define MODULE_CRIT				1
-#define MODULE_OFF				2
+#define MODULE_ON				0
+#define MODULE_MALFUNCTION		1
+#define MODULE_NON_OPERATIONAL	2
 #define MODULE_STANDBY			3
 
 //satellite modules states as chars
-static const char OK_STR[] = "OK";
-static const char CRIT_STR[] = "CRIT";
-static const char OFF_STR[] = "OFF";
-static const char STAND_BY_STR[] = "STANDBY";
+static const char MODULE_ON_STR[] = "ON";
+static const char MODULE_MALFUNCTION_STR[] = "MALFUNCTION";
+static const char MODULE_NON_OPERATIONAL_STR[] = "NON_OPERATIONAL";
+static const char MODULE_STANDBY_STR[] = "STANDBY";
 
 //negevSat reserved words as chars
 static const char TEMPERATURE_STR[] = "Temperature";

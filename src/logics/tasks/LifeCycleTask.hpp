@@ -18,6 +18,7 @@
 #include "logics/CommandExecutor.hpp"
 #include <string>
 #include <vector>
+#include "logics/Sampler.hpp"
 
 #define MAX_SAMPLES 	10
 
@@ -31,6 +32,7 @@ private:
 	TLMParser::TLMParser parser;
 	HardwareState::HardwareState hardware;
 	CommandExecutor::CommandExecutor executor;
+	Sampler::Sampler sampler;
 	int samples_counter;
 	int state;
 

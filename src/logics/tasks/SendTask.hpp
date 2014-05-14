@@ -12,11 +12,12 @@
 #include "communication/UartCommunicationHandler.hpp"
 #include <rtems++/rtemsTask.h>
 
-#define STATIC_SEND 		RTEMS_EVENT_1
-#define ENERGY_SEND 		RTEMS_EVENT_2
-#define TEMP_SEND 			RTEMS_EVENT_3
-#define MIXED_SEND 			RTEMS_EVENT_4
+#define STATIC_SEND 			RTEMS_EVENT_1
+#define ENERGY_SEND 			RTEMS_EVENT_2
+#define TEMP_SEND 				RTEMS_EVENT_3
+#define MIXED_SEND 				RTEMS_EVENT_4
 
+#define PACKET_COUNTER_LIMIT	10
 
 class SendTask : public rtemsTask
 {
@@ -24,6 +25,7 @@ private:
 	ICommunicationHandler::ICommunicationHandler* comm_handler;
 	SendReceiveQueue::SendReceiveQueue** sendQueues;
 	int send_type;
+	int packet_counter;
 protected:
 	virtual void body(rtems_task_argument argument);
 

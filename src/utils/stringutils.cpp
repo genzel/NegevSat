@@ -43,14 +43,14 @@ const char* state_to_chars (int state){
 
 const char* module_state_to_chars(int state){
 	switch (state){
-	case MODULE_OK:
-		return OK_STR;
-	case MODULE_CRIT:
-		return CRIT_STR;
-	case MODULE_OFF:
-		return OFF_STR;
+	case MODULE_ON:
+		return MODULE_ON_STR;
+	case MODULE_MALFUNCTION:
+		return MODULE_MALFUNCTION_STR;
+	case MODULE_NON_OPERATIONAL:
+		return MODULE_NON_OPERATIONAL_STR;
 	case MODULE_STANDBY:
-		return STAND_BY_STR;
+		return MODULE_STANDBY_STR;
 	default:
 		printf("ILLEGAL STATE");
 		// TODO throw exception!
