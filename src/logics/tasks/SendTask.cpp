@@ -12,6 +12,7 @@
 #include <rtems++/rtemsEvent.h>
 #include "logics/SendReceiveConf.hpp"
 #include "logics/Global.hpp"
+#include "logics/NegevSatConstants.hpp"
 
 using namespace std;
 /*
@@ -42,6 +43,7 @@ SendTask::SendTask(SendReceiveQueue::SendReceiveQueue** sendQ)
 	comm_handler = factory.createHandler("uart");
 	send_type = STATIC_SEND;
 	packet_counter = 0;
+	conncted = false;
 }
 
 void SendTask::send(string packet){
@@ -72,37 +74,37 @@ rtems_task SendTask::body(rtems_task_argument argument){
 		switch (send_type) {
 		case STATIC_SEND:
 			printf(" * SEND TASK:: type of send is STATIC_SEND *\n");
-			/*packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
-			send(packet);*/
+			packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
+			send(packet);
 			break;
 		case ENERGY_SEND:
 			printf(" * SEND TASK:: type of send is ENERGY_SEND *\n");
-			/*packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
-			send(packet);*/
+			packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
+			send(packet);
 			if (packet_counter == PACKET_COUNTER_LIMIT){
 				packet_counter = 0;
-				/*packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
-				send(packet);*/
+				packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
+				send(packet);
 			}
 			break;
 		case TEMP_SEND:
 			printf(" * SEND TASK:: type of send is TEMP_SEND *\n");
-			/*packet = sendQueues[SENDQ_TEMP_INDEX]->dequeue();
-			send(packet);*/
+			packet = sendQueues[SENDQ_TEMP_INDEX]->dequeue();
+			send(packet);
 			if (packet_counter == PACKET_COUNTER_LIMIT){
 				packet_counter = 0;
-				/*packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
-				send(packet);*/
+				packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
+				send(packet);
 			}
 			break;
 		case MIXED_SEND:
 			printf(" * SEND TASK:: type of send is MIXED_SEND *\n");
-			/*packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
+			packet = sendQueues[SENDQ_ENERGY_INDEX]->dequeue();
 			send(packet);
 			packet = sendQueues[SENDQ_TEMP_INDEX]->dequeue();
 			send(packet);
 			packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
-			send(packet);*/
+			send(packet);
 			break;
 		}
 	}

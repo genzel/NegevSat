@@ -52,16 +52,20 @@ string UartCommunicationHandler::receive(){
 	numBytes = read(fd,buffer,BUFF_SIZE);
 	if (numBytes < 0) {
 		printf ("read error!!!\n");
+		close(fd);
+		return "";
 		// TODO exception handling
 	}
 	close(fd);
-	//cout << buffer;
 	string data(buffer, numBytes);
-	printf ("pushing to input this data: %s\n",&data[0]);
 	return data;
 }
 
 bool UartCommunicationHandler::verifyBytes(string msg){
+	// TODO check out to implement
+	if (msg.compare("") == 0){
+		return false;
+	}
 	return true;
 }
 

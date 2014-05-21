@@ -12,16 +12,16 @@
 #include "data_protocol/WorkDescription.hpp"
 #include "logics/NegevSatConstants.hpp"
 #include "logics/Global.hpp"
-#include "hardware/HardwareState.hpp"
+#include "logics/ModulesOperationRequest.hpp"
 
 class CommandExecutor {
 private:
-	HardwareState::HardwareState* hardware;
+	ModulesOperationRequest::ModulesOperationRequest* modules_request;
 public:
 	CommandExecutor();
 	virtual ~CommandExecutor();
 	void execute(WorkDescription::WorkDescription work);
-	void setHardawre(HardwareState::HardwareState* _hardware);
+	void setModulesRequest(ModulesOperationRequest::ModulesOperationRequest* _modules_request);
 };
 
 #endif /* COMMANDEXECUTOR_HPP_ */

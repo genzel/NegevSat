@@ -11,6 +11,7 @@
 #include "utils/stringutils.hpp"
 #include "logics/NegevSatConstants.hpp"
 #include "logics/SendReceiveConf.hpp"
+#include <rtems++/rtemsEvent.h>
 
 using namespace std;
 using namespace stringutils;
@@ -20,7 +21,7 @@ LifeCycleTask::LifeCycleTask(WorkQueue::WorkQueue* _rdy_works, SendReceiveQueue:
 	send_queues = _send_queues;
 	samples_counter = 0;
 	state = INIT_STATE;
-	executor.setHardawre(&hardware);
+	executor.setModulesRequest(&modules_request);
 	sampler.setHardware(&hardware);
 }
 
@@ -33,6 +34,17 @@ LifeCycleTask::~LifeCycleTask() {
  */
 void LifeCycleTask::control_command(){
 	printf(" * LifeCycle TASK:: control_command *\n");
+	if (state == SAFE_STATE){
+		printf(" * LifeCycle TASK:: control_command - SUN POINTING *\n");
+		// simulating charging the batter here when pointing the sun
+		int voltage = hardware.getEnergy(false);
+		voltage++;
+		hardware.setEnergy(voltage);
+	}
+	if (state == REGULAR_OPS_STATE || state == FACING_GROUND_STATE){
+		printf(" * LifeCycle TASK:: control_command - EARTH POINTING *\n");
+	}
+	//in INIT and STANDBY modes no actions to take
 }
 
 /**
@@ -40,8 +52,36 @@ void LifeCycleTask::control_command(){
  * perform computation
  */
 void LifeCycleTask::control_algorithmics(){
-
 	printf(" * LifeCycle TASK:: control_algorithmics *\n");
+}
+
+/**
+ * check on which state the satellite is atm
+ */
+void LifeCycleTask::obtain_state(){
+	printf(" * LifeCycle TASK:: obtain_state *\n");
+	rtemsEvent event;
+	rtems_event_set out;
+	rtems_status_code status = event.receive(RTEMS_ALL_EVENTS, out, 0, rtemsEvent::no_wait, rtemsEvent::any);
+	if (status == RTEMS_SUCCESSFUL){
+		switch (out){
+		case INIT_STATE_EVENT:
+			state = INIT_STATE;
+			break;
+		case STANDBY_STATE_EVENT:
+			state = STANDBY_STATE;
+			break;
+		case SAFE_STATE_EVENT:
+			state = SAFE_STATE;
+			break;
+		case REGULAR_OPS_STATE_EVENT:
+			state = REGULAR_OPS_STATE;
+			break;
+		case FACING_GROUND_STATE_EVENT:
+			state = FACING_GROUND_STATE;
+			break;
+		}
+	}
 }
 
 /**
@@ -101,6 +141,12 @@ void LifeCycleTask::attitude_control(){
 void LifeCycleTask::logics(){
 	printf(" * LifeCycle TASK:: logics *\n");
 	// TODO Add logics when state machine is rdy
+	if (hardware.getEnergyStatus() == MODULE_MALFUNCTION){
+		rtemsEvent event;
+		rtems_event_set out;
+		out = MOVE_TO_SAFE_EVENT;
+		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
+	}
 }
 
 void LifeCycleTask::perform_cmd(){
@@ -120,23 +166,73 @@ void LifeCycleTask::monitoring(){
 	if (voltage < MIN_PROPER_VOLTAGE || current < MIN_PROPER_CURRENT){
 		hardware.setEnergyStatus(MODULE_MALFUNCTION);
 	}
-	if (temp < MIN_PROPER_TEMPERATURE || temp > MAX_PROPER_TEMPERATURE){
+	if (temp > MAX_PROPER_TEMPERATURE){
 		hardware.setTemperatureStatus(MODULE_MALFUNCTION);
 	}
 }
 
 void LifeCycleTask::module_ctrl(){
 
+	printf(" * LifeCycle TASK:: module ctrl *\n");
+
+	if (state == SAFE_STATE){
+		printf(" * LifeCycle TASK:: module ctrl - SAFE! turning off unneeded modules *\n");
+		hardware.setPayloadStatus(MODULE_STANDBY);
+		hardware.setSbandStatus(MODULE_STANDBY);
+	}
+
+	if(modules_request.get_payload_request() == TURN_ON
+			&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
+			&& hardware.getTemperatureStatus() == MODULE_ON){
+		hardware.setPayloadStatus(MODULE_ON);
+		modules_request.payload_request(NO_CHANGE);
+	}
+
+	if (modules_request.get_payload_request() == STANDBY){
+		hardware.setPayloadStatus(MODULE_STANDBY);
+		modules_request.payload_request(NO_CHANGE);
+	}
+
+	if(modules_request.get_sband_request() == TURN_ON
+				&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
+				&& hardware.getTemperatureStatus() == MODULE_ON){
+			hardware.setSbandStatus(MODULE_ON);
+			modules_request.sband_request(NO_CHANGE);
+	}
+
+	if (modules_request.get_sband_request() == STANDBY){
+		hardware.setSbandStatus(MODULE_STANDBY);
+		modules_request.sband_request(NO_CHANGE);
+	}
+
+	if (modules_request.get_thermal_ctrl_request() == TURN_ON){
+		hardware.setThermalControlStatus(MODULE_ON);
+		modules_request.thermal_ctrl_request(NO_CHANGE);
+	}
+
+	if (modules_request.get_thermal_ctrl_request() == STANDBY){
+		hardware.setThermalControlStatus(MODULE_STANDBY);
+		modules_request.thermal_ctrl_request(NO_CHANGE);
+	}
+
 }
 
 void LifeCycleTask::thermal_ctrl(){
-
+	printf(" * LifeCycle TASK:: thermal ctrl *\n");
+	if (hardware.getTemperatureStatus() == MODULE_MALFUNCTION){
+		printf(" * LifeCycle TASK:: thermal ctrl - module malfunction *\n");
+		int temp = hardware.getTemperature(false);
+		temp--;
+		hardware.setTemperature(temp);
+		printf(" * LifeCycle TASK:: thermal ctrl - temp is now: %d *\n", temp);
+	}
 }
 
 void LifeCycleTask::body(rtems_task_argument argument){
 	// TODO pay attention and act differently on each state using events
 	for (;;){
 		printf(" * LifeCycle TASK! *\n");
+		obtain_state();
 		attitude_control();
 		logics();
 		perform_cmd();

@@ -20,6 +20,7 @@ using namespace std;
 class WorkQueue {
 
 private:
+	// TODO change implmentation to NOT vector
 	vector<WorkDescription::WorkDescription> works;
 	rtems_id mutex_id;
 	rtems_id produced_count_id;

@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "logics/Sampler.hpp"
+#include "logics/ModulesOperationRequest.hpp"
 
 #define MAX_SAMPLES 	10
 
@@ -33,6 +34,7 @@ private:
 	HardwareState::HardwareState hardware;
 	CommandExecutor::CommandExecutor executor;
 	Sampler::Sampler sampler;
+	ModulesOperationRequest::ModulesOperationRequest modules_request;
 	int samples_counter;
 	int state;
 
@@ -42,6 +44,7 @@ protected:
 public:
 	LifeCycleTask(WorkQueue::WorkQueue* _rdy_works, SendReceiveQueue::SendReceiveQueue** _send_queues);
 	virtual ~LifeCycleTask();
+	void obtain_state();
 	void control_unit_samples();
 	void control_algorithmics();
 	void control_command();

@@ -5,13 +5,16 @@
  *      Author: dariaz
  */
 
-#ifndef NEGEVSATSTATES_HPP_
-#define NEGEVSATSTATES_HPP_
+#ifndef NEGEVSATCONSTANTS_HPP_
+#define NEGEVSATCONSTANTS_HPP_
 
 #include <rtems++/rtemsTask.h>
 
 //tasks
 #define NUMBER_OF_TASKS					7
+#define NUMBER_OF_PASSIVE_TASKS			2
+#define NUMBER_OF_ACTIVE_TASKS			NUMBER_OF_TASKS - NUMBER_OF_PASSIVE_TASKS
+
 #define SEND_TASK_INDEX					0
 #define RECEIVE_TASK_INDEX				1
 #define MP_TASK_INDEX					2
@@ -22,12 +25,33 @@
 
 
 
+
 // satellite states enums
 #define INIT_STATE				0
 #define STANDBY_STATE			1
 #define SAFE_STATE				2
 #define REGULAR_OPS_STATE		3
 #define FACING_GROUND_STATE		4
+
+// satellite states events - these events are relevant to all tasks and should not be overwritten
+#define INIT_STATE_EVENT			RTEMS_EVENT_0
+#define STANDBY_STATE_EVENT			RTEMS_EVENT_1
+#define SAFE_STATE_EVENT			RTEMS_EVENT_2
+#define REGULAR_OPS_STATE_EVENT		RTEMS_EVENT_3
+#define FACING_GROUND_STATE_EVENT	RTEMS_EVENT_4
+
+// send task events
+#define STATIC_SEND 			RTEMS_EVENT_10
+#define ENERGY_SEND 			RTEMS_EVENT_11
+#define TEMP_SEND 				RTEMS_EVENT_12
+#define MIXED_SEND 				RTEMS_EVENT_13
+
+// state machine task events
+#define MOVE_TO_SAFE_EVENT					RTEMS_EVENT_10
+#define MOVE_TO_STANDBY_EVENT				RTEMS_EVENT_11
+#define MOVE_TO_OP_EVENT					RTEMS_EVENT_12
+#define RECEIVED_COMMUNICATION_EVENT		RTEMS_EVENT_13
+#define LOST_COMMUNICATION_EVENT			RTEMS_EVENT_14
 
 //satellite states as chars
 static const char INIT_STATE_STR[] = "INIT_STATE";
@@ -79,5 +103,5 @@ static const char XML_VERSION_NUM[] = "1.0";
 static const char XML_ENCODING[] = "encoding";
 static const char XML_ENCODING_TYPE[] = "utf-8";
 
-#endif /* NEGEVSATSTATES_HPP_ */
+#endif /* NEGEVSATCONSTANTS_HPP_ */
 

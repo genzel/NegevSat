@@ -18,12 +18,12 @@ CommandExecutor::~CommandExecutor() {
 	// TODO Auto-generated destructor stub
 }
 
-void CommandExecutor::setHardawre(HardwareState::HardwareState* _hardware){
-	hardware = _hardware;
+void CommandExecutor::setModulesRequest(ModulesOperationRequest::ModulesOperationRequest* _modules_request){
+	modules_request = _modules_request;
 }
 
 void CommandExecutor::execute(WorkDescription::WorkDescription work){
-	if (hardware == 0){
+	if (modules_request == 0){
 		printf (" * LifeCycle TASK::CommandExecutor:please set the hardware! exiting... *\n");
 		return;
 	}
@@ -33,16 +33,19 @@ void CommandExecutor::execute(WorkDescription::WorkDescription work){
 	rtems_status_code status;
 	switch (opcode){
 	case MOVE_TO_SAFE:
-		//TODO move to safe!
 		printf(" * LifeCycle TASK::CommandExecutor: moving to safe mode! *\n");
+		out = MOVE_TO_SAFE_EVENT;
+		send_event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
 		break;
 	case MOVE_TO_STANDBY:
-		//TODO move to standby!
 		printf(" * LifeCycle TASK::CommandExecutor: moving to standby mode! *\n");
+		out = MOVE_TO_STANDBY_EVENT;
+		send_event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
 		break;
 	case MOVE_TO_OP:
-		//TODO move to operational!
 		printf(" * LifeCycle TASK::CommandExecutor: moving to operational mode! *\n");
+		out = MOVE_TO_OP_EVENT;
+		send_event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
 		break;
 	case FORMAT_ENERGY:
 		printf(" * LifeCycle TASK::CommandExecutor: changing format to ENERGY! *\n");
@@ -70,27 +73,27 @@ void CommandExecutor::execute(WorkDescription::WorkDescription work){
 		break;
 	case SBAND_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning SBAND on! *\n");
-		hardware->setSbandStatus(MODULE_ON);
+		modules_request->sband_request(TURN_ON);
 		break;
 	case SBAND_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning SBAND off! *\n");
-		hardware->setSbandStatus(MODULE_STANDBY);
+		modules_request->sband_request(STANDBY);
 		break;
 	case PAYLOAD_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning PAYLOAD on! *\n");
-		hardware->setPayloadStatus(MODULE_ON);
+		modules_request->payload_request(TURN_ON);
 		break;
 	case PAYLOAD_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning PAYLOAD off! *\n");
-		hardware->setPayloadStatus(MODULE_STANDBY);
+		modules_request->payload_request(STANDBY);
 		break;
 	case THERMAL_CTRL_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning THERMAL_CTRL on! *\n");
-		hardware->setThermalControlStatus(MODULE_ON);
+		modules_request->thermal_ctrl_request(TURN_ON);
 		break;
 	case THERMAL_CTRL_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning THERMAL_CTRL off! *\n");
-		hardware->setThermalControlStatus(MODULE_STANDBY);
+		modules_request->thermal_ctrl_request(STANDBY);
 		break;
 	default:
 		printf(" * LifeCycle TASK::CommandExecutor: Illegal command in work! *\n");
