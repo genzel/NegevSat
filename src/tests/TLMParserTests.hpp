@@ -12,7 +12,7 @@ class TLMParserTests {
 public:
 	TLMParserTests();
 	virtual ~TLMParserTests();
-	void runTests();
+	char* runTests();
 };
 
 #endif /* TLMPARSERTESTS_HPP_ */

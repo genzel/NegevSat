@@ -73,27 +73,27 @@ void CommandExecutor::execute(WorkDescription::WorkDescription work){
 		break;
 	case SBAND_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning SBAND on! *\n");
-		modules_request->sband_request(TURN_ON);
+		modules_request->request_sband(TURN_ON);
 		break;
 	case SBAND_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning SBAND off! *\n");
-		modules_request->sband_request(STANDBY);
+		modules_request->request_sband(STANDBY);
 		break;
 	case PAYLOAD_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning PAYLOAD on! *\n");
-		modules_request->payload_request(TURN_ON);
+		modules_request->request_payload(TURN_ON);
 		break;
 	case PAYLOAD_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning PAYLOAD off! *\n");
-		modules_request->payload_request(STANDBY);
+		modules_request->request_payload(STANDBY);
 		break;
 	case THERMAL_CTRL_ON:
 		printf(" * LifeCycle TASK::CommandExecutor: turning THERMAL_CTRL on! *\n");
-		modules_request->thermal_ctrl_request(TURN_ON);
+		modules_request->request_thermal_ctrl(TURN_ON);
 		break;
 	case THERMAL_CTRL_STANDBY:
 		printf(" * LifeCycle TASK::CommandExecutor: turning THERMAL_CTRL off! *\n");
-		modules_request->thermal_ctrl_request(STANDBY);
+		modules_request->request_thermal_ctrl(STANDBY);
 		break;
 	default:
 		printf(" * LifeCycle TASK::CommandExecutor: Illegal command in work! *\n");

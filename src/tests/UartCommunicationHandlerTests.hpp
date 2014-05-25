@@ -12,7 +12,7 @@ class UartCommunicationHandlerTests {
 public:
 	UartCommunicationHandlerTests();
 	virtual ~UartCommunicationHandlerTests();
-	void runTests();
+	char* runTests();
 };
 
 #endif /* UARTCOMMUNICATIONHANDLERTESTS_HPP_ */

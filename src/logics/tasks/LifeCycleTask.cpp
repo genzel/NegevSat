@@ -185,34 +185,34 @@ void LifeCycleTask::module_ctrl(){
 			&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
 			&& hardware.getTemperatureStatus() == MODULE_ON){
 		hardware.setPayloadStatus(MODULE_ON);
-		modules_request.payload_request(NO_CHANGE);
+		modules_request.request_payload(NO_CHANGE);
 	}
 
 	if (modules_request.get_payload_request() == STANDBY){
 		hardware.setPayloadStatus(MODULE_STANDBY);
-		modules_request.payload_request(NO_CHANGE);
+		modules_request.request_payload(NO_CHANGE);
 	}
 
 	if(modules_request.get_sband_request() == TURN_ON
 				&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
 				&& hardware.getTemperatureStatus() == MODULE_ON){
 			hardware.setSbandStatus(MODULE_ON);
-			modules_request.sband_request(NO_CHANGE);
+			modules_request.request_sband(NO_CHANGE);
 	}
 
 	if (modules_request.get_sband_request() == STANDBY){
 		hardware.setSbandStatus(MODULE_STANDBY);
-		modules_request.sband_request(NO_CHANGE);
+		modules_request.request_sband(NO_CHANGE);
 	}
 
 	if (modules_request.get_thermal_ctrl_request() == TURN_ON){
 		hardware.setThermalControlStatus(MODULE_ON);
-		modules_request.thermal_ctrl_request(NO_CHANGE);
+		modules_request.request_thermal_ctrl(NO_CHANGE);
 	}
 
 	if (modules_request.get_thermal_ctrl_request() == STANDBY){
 		hardware.setThermalControlStatus(MODULE_STANDBY);
-		modules_request.thermal_ctrl_request(NO_CHANGE);
+		modules_request.request_thermal_ctrl(NO_CHANGE);
 	}
 
 }

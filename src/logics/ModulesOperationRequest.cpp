@@ -7,10 +7,6 @@
 
 #include <logics/ModulesOperationRequest.hpp>
 
-ModulesOperationRequest::ModulesOperationRequest() {
-	// TODO Auto-generated constructor stub
-
-}
 
 ModulesOperationRequest::~ModulesOperationRequest() {
 	// TODO Auto-generated destructor stub

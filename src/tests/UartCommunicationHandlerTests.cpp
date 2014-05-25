@@ -16,7 +16,7 @@ UartCommunicationHandlerTests::~UartCommunicationHandlerTests() {
 	// TODO Auto-generated destructor stub
 }
 
-void UartCommunicationHandlerTests::runTests(){
+char* UartCommunicationHandlerTests::runTests(){
 	/*UartCommunicationHandler::UartCommunicationHandler uart; // concrete implementation - should be changed to needed handler
 		ICommunicationHandler::ICommunicationHandler*  ch =  &uart;
 		ch->receive();*/

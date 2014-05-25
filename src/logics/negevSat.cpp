@@ -65,8 +65,10 @@
 #include "logics/tasks/LifeCycleTask.hpp"
 #include "data_protocol/WorkQueue.hpp"
 #include <stdio.h>
-
+#include "tests/AllTests.hpp"
 using namespace std;
+
+bool tests = true;
 
 rtemsTask::rtemsTask* task_table[NUMBER_OF_TASKS];
 
@@ -79,7 +81,10 @@ rtems_task Init(
 
 rtems_task Init(rtems_task_argument )
 {
-
+	if(tests){
+		AllTests::AllTests tests(CMD_PARSER_TESTS);
+		tests.run_all_tests();
+	}
 	// create send task
 	SendReceiveQueue::SendReceiveQueue** send_queue_arr = new SendReceiveQueue::SendReceiveQueue* [SENDQ_SIZE];
 	for (int i=0 ; i<SENDQ_SIZE; i++){

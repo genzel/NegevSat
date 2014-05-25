@@ -16,7 +16,7 @@ TLMParserTests::~TLMParserTests() {
 	// TODO Auto-generated destructor stub
 }
 
-void TLMParserTests::runTests(){
+char* TLMParserTests::runTests(){
 	/*MPTask::MPTask task;
 	SendReceiveQueue::SendReceiveQueue send;
 	SendTask::SendTask sendTask(&send);

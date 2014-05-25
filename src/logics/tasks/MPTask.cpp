@@ -63,6 +63,7 @@ void MPTask::body(rtems_task_argument argument){
 		string packet = receive_queue->dequeue();
 		validator->buildPacket(packet);
 		if (validateMessage()){
+
 			vector<WorkDescription::WorkDescription> parsed_works = parseMessage();
 			for (i=0; i<parsed_works.size(); i++){
 				enqueueToWorks(parsed_works.at(i));
