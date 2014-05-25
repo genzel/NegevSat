@@ -22,7 +22,7 @@ NOTE: if you wish to update any of these tools, you should also update the "Path
 Quick hello-world c++ application:
 
 1. Run Eclipse which was installed in the previous tutorial
-2. Create a new C++ project:
+2. Create a new C++ project:<br>
     2.1 File -> new -> C++ project
     2.2 Choose a name and type it in the "Project name" field
     2.3 Under Project type select "Hello World C++ Project"
