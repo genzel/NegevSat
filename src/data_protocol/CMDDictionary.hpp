@@ -23,4 +23,10 @@
 #define THERMAL_CTRL_ON			12
 #define THERMAL_CTRL_STANDBY	13
 
+// simulation commands
+#define SET_TEMPERATURE			100
+#define SET_ENERGY				101
+#define CONNECTED				102
+#define DISCONNECTED			103
+
 #endif /* CMDDICTIONARY_HPP_ */

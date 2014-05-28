@@ -10,6 +10,7 @@
 
 #include "data_protocol/XMLValidator.hpp"
 #include "data_protocol/CMDParser.hpp"
+#include "minunit.h"
 
 class CMDParserTests {
 
@@ -20,7 +21,6 @@ public:
 	CMDParserTests();
 	virtual ~CMDParserTests();
 	char* runTests();
-	char * test_foo();
 };
 
 #endif /* CMDPARSERTESTS_HPP_ */

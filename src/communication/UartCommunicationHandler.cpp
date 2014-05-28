@@ -25,39 +25,56 @@ UartCommunicationHandler::UartCommunicationHandler(){
 
 }
 
-void UartCommunicationHandler::send(char* buffer, int length){
+bool UartCommunicationHandler::send(char* buffer, int length){
 
-	printf ("*** openning uart ***\n");
+	printf ("*** opening uart ***\n");
 
-	int fd = open("/dev/console_b", O_RDWR /*| O_NOCTTY | _FNDELAY*/);
+	int fd = open("/dev/console_b", O_RDWR | O_NOCTTY | _FNDELAY);
 
-	printf("\nOpened COM1, fd=%d\n\n", fd);
+	if (fd == -1){
+		return false;
+	}
+
+	printf("Opened COM1, fd=%d\n\n", fd);
 
 	int numBytes = write(fd, buffer, length);
 
 	if (numBytes < 0) {
 		printf ("\nFailed to send from COM1!\n");
+		return false;
 		//TODO: add exception handling
 	}
 	close(fd);
+	return true;
 }
 
 //TODO receive until a specific char arrived
 string UartCommunicationHandler::receive(){
 	int numBytes = 0;
 	char buffer[BUFF_SIZE];
-	printf ("*** openning uart ***\n");
+	printf ("*** opening uart ***\n");
 	int fd = open("/dev/console_b", O_RDWR /*| O_NOCTTY | _FNDELAY*/);
+	if (fd == -1){
+		return "";
+	}
 	printf ("\nOpened COM1, fd=%d\n", fd);
-	numBytes = read(fd,buffer,BUFF_SIZE);
+
+	numBytes = read(fd,buffer,BUFF_SIZE-1);
 	if (numBytes < 0) {
 		printf ("read error!!!\n");
 		close(fd);
 		return "";
 		// TODO exception handling
 	}
+	else {
+		buffer[numBytes] = 0; // terminate
+	}
+	printf(buffer);
+	printf("\n buffer ^");
 	close(fd);
-	string data(buffer, numBytes);
+	printf("%s\n",buffer);
+	string data(buffer, numBytes+1);
+	printf("%s\n",&data[0]);
 	return data;
 }
 

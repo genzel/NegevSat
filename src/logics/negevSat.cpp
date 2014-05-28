@@ -16,44 +16,23 @@
 
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-#define CONFIGURE_MAXIMUM_PORTS				  TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_TASKS               TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_TIMERS              TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_SEMAPHORES          TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES      TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_PARTITIONS          TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_REGIONS             TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_PERIODS             TEST_AMOUNT
-#define CONFIGURE_MAXIMUM_USER_EXTENSIONS     TEST_AMOUNT
-#define CONFIGURE_TICKS_PER_TIMESLICE       100
-#define CONFIGURE_MAXIMUM_POSIX_MUTEXES       TEST_AMOUNT
-
+#define CONFIGURE_MAXIMUM_PORTS				  		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_TASKS               		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_TIMERS              		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_SEMAPHORES          		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES      		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_PARTITIONS          		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_REGIONS             		TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_PERIODS            	 	TEST_AMOUNT
+#define CONFIGURE_MAXIMUM_USER_EXTENSIONS    		TEST_AMOUNT
+#define CONFIGURE_TICKS_PER_TIMESLICE       		100
+#define CONFIGURE_MAXIMUM_POSIX_MUTEXES      		TEST_AMOUNT
+#define CONFIGURE_LIBIO_MAXIMUM_FILE_DESCRIPTORS 	TEST_AMOUNT
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
-#define CONFIGURE_INIT_TASK_STACK_SIZE      (4 * RTEMS_MINIMUM_STACK_SIZE)
-#define CONFIGURE_EXTRA_TASK_STACKS         (13 * RTEMS_MINIMUM_STACK_SIZE)
+#define CONFIGURE_INIT_TASK_STACK_SIZE      		(4 * RTEMS_MINIMUM_STACK_SIZE)
+#define CONFIGURE_EXTRA_TASK_STACKS         		(13 * RTEMS_MINIMUM_STACK_SIZE)
 
 #include <rtems/confdefs.h>
-
-/*
-#include "communication/UartCommunicationHandler.hpp"
-#include "communication/SendReceiveQueue.hpp"
-#include "third_party/rapidxml.hpp"
-#include "data_protocol/CMDParser.hpp"
-#include "third_party/rapidxml_print.hpp"
-#include "data_protocol/XMLValidator.hpp"
-#include "data_protocol/WorkDescription.hpp"
-#include "data_protocol/TLMParser.hpp"
-#include "data_protocol/Sample.hpp"
-#include "logics/tasks/SendTask.hpp"
-#include "logics/tasks/CMDTask.hpp"
-#include "logics/tasks/MPTask.hpp"
-#include <stdio.h>
-#include <rtems++/rtemsEvent.h>
-#include "utils/stringutils.hpp"
-#include "logics/Global.hpp"
-#include "CommandExecutor.hpp"
-*/
-
 #include "logics/NegevSatConstants.hpp"
 #include "logics/SendReceiveConf.hpp"
 #include "communication/SendReceiveQueue.hpp"
@@ -77,12 +56,14 @@ extern "C"
 rtems_task Init(
 		rtems_task_argument argument
 );
+
+#define CONFIGURE_APPLICATION_EXTRA_DRIVERS 	TTY1_DRIVER_TABLE_ENTRY
 }
 
 rtems_task Init(rtems_task_argument )
 {
 	if(tests){
-		AllTests::AllTests tests(CMD_PARSER_TESTS);
+		AllTests::AllTests tests(/*CMD_PARSER_TESTS*/ /*TLM_PARSER_TESTS*/ /*SEND_TESTS*/ RECEIVE_TESTS);
 		tests.run_all_tests();
 	}
 	// create send task

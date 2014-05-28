@@ -7,7 +7,6 @@
 
 #include <tests/CMDParserTests.hpp>
 #include "communication/SendReceiveQueue.hpp"
-#include "minunit.h"
 #include "data_protocol/ValidatorFactory.hpp"
 #include "data_protocol/WorkDescription.hpp"
 #include <vector>

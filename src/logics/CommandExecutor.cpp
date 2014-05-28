@@ -95,6 +95,25 @@ void CommandExecutor::execute(WorkDescription::WorkDescription work){
 		printf(" * LifeCycle TASK::CommandExecutor: turning THERMAL_CTRL off! *\n");
 		modules_request->request_thermal_ctrl(STANDBY);
 		break;
+
+		// XXX SIMULATOR FIELDS XXX
+
+	case SET_TEMPERATURE:
+		printf(" * LifeCycle TASK::CommandExecutor: setting temperature to high temperature! *\n");
+		modules_request->request_set_temp(TURN_ON);
+		break;
+	case SET_ENERGY:
+		printf(" * LifeCycle TASK::CommandExecutor: setting energy to low energy! *\n");
+		modules_request->request_set_energy(TURN_ON);
+		break;
+	case CONNECTED:
+		printf(" * LifeCycle TASK::CommandExecutor: connecting to ground! *\n");
+		modules_request->request_connected(TURN_ON);
+		break;
+	case DISCONNECTED:
+		printf(" * LifeCycle TASK::CommandExecutor: disconnecting from ground! *\n");
+		modules_request->request_connected(STANDBY);
+		break;
 	default:
 		printf(" * LifeCycle TASK::CommandExecutor: Illegal command in work! *\n");
 	}

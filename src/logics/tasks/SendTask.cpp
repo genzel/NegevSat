@@ -67,7 +67,7 @@ rtems_task SendTask::body(rtems_task_argument argument){
 			//continue;
 		}
 		else {
-			printf(" * SEND TASK:: changed send type to %d *\n", out);
+			printf(" * SEND TASK:: changed send type to %d *\n", (int)out);
 			send_type = out;
 		}
 		string packet;

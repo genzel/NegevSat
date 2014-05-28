@@ -13,7 +13,7 @@
 #include "communication/ICommunicationHandler.hpp"
 
 using namespace std;
-#define BUFF_SIZE 256
+#define BUFF_SIZE 1024
 
 class UartCommunicationHandler : public ICommunicationHandler {
 
@@ -22,7 +22,7 @@ private:
 public:
 	UartCommunicationHandler ();
 	~UartCommunicationHandler(){}
-	void send(char* buffer, int length);
+	bool send(char* buffer, int length);
 	string receive();
 	bool verifyBytes(string msg);
 };

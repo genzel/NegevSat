@@ -6,6 +6,12 @@
  */
 
 #include <tests/TLMParserTests.hpp>
+#include "utils/stringutils.hpp"
+#include "logics/NegevSatConstants.hpp"
+#include <stdio.h>
+#include <string>
+
+using namespace stringutils;
 
 TLMParserTests::TLMParserTests() {
 	// TODO Auto-generated constructor stub
@@ -17,40 +23,51 @@ TLMParserTests::~TLMParserTests() {
 }
 
 char* TLMParserTests::runTests(){
-	/*MPTask::MPTask task;
-	SendReceiveQueue::SendReceiveQueue send;
-	SendTask::SendTask sendTask(&send);
+	int state = REGULAR_OPS_STATE;
+	int time = 10;
+	sampler.setHardware(&hardware);
 
-	TLMParser::TLMParser parser;
-	parser.createPacket("operational", "Static");
-	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
-	//printf("%s\n",&parser.packetToString()[0]);
+	hardware.setEnergy(100);
+	hardware.setEnergyCurrent(3);
+	hardware.setTemperature(40);
+	hardware.setPayloadStatus(MODULE_ON);
+	hardware.setSbandStatus(MODULE_STANDBY);
 
-	Sample::Sample sample("Module", "122");
-	map<const char*,const char*> measure;
-	measure.insert(pair<const char*,const char*>("name", "X"));
-	measure.insert(pair<const char*,const char*>("status", "OK"));
-	sample.addMeasure("Info", measure);
+	parser.createPacket("",ENERGY_STR);
+	parser.createPacket("", TEMPERATURE_STR);
+	parser.createPacket(state_to_chars(state),STATIC_STR);
+	printf("%s\n",&parser.getPacket(STATIC_STR)->packetToString()[0]);
 
-	Sample::Sample sample2("Module", "124");
-	map<const char*,const char*> measure2;
-	measure2.insert(pair<const char*,const char*>("name", "Y"));
-	measure2.insert(pair<const char*,const char*>("status", "CRIT"));
-	sample2.addMeasure("Info", measure2);
+	Sample::Sample energy_sample = sampler.createSample(ENERGY_STR, true, time, HW_ENERGY_MODULE);
+	parser.addSampleToPacket(energy_sample,ENERGY_STR);
 
-	parser.addSampleToPacket(sample, "Static");
-	parser.addSampleToPacket(sample2, "Static");
-	printf("%s\n",&parser.getPacket("Static")->packetToString()[0]);
+	Sample::Sample temp_sample = sampler.createSample(TEMPERATURE_STR, true, time, HW_TEMP_MODULE);
+	parser.addSampleToPacket(temp_sample,TEMPERATURE_STR);
 
-	send.enqueue(&parser.getPacket("Static")->packetToString()[0]);
+	// create static samples
+	Sample::Sample static_sband_sample = sampler.createSample(STATIC_STR, true, time, HW_SBAND_MODULE);
+	parser.addSampleToPacket(static_sband_sample,STATIC_STR);
+	Sample::Sample static_temp_sample = sampler.createSample(STATIC_STR, true, time, HW_TEMP_MODULE);
+	parser.addSampleToPacket(static_temp_sample,STATIC_STR);
+	Sample::Sample static_energy_sample = sampler.createSample(STATIC_STR, true, time, HW_ENERGY_MODULE);
+	parser.addSampleToPacket(static_energy_sample,STATIC_STR);
+	Sample::Sample static_solarp_sample = sampler.createSample(STATIC_STR, true, time, HW_SOLARP_MODULE);
+	parser.addSampleToPacket(static_solarp_sample,STATIC_STR);
+	Sample::Sample static_payload_sample = sampler.createSample(STATIC_STR, true, time, HW_PAYLOAD_MODULE);
+	parser.addSampleToPacket(static_payload_sample,STATIC_STR);
+	Sample::Sample static_thermal_ctrl_sample = sampler.createSample(STATIC_STR, true, time, HW_TERMAL_CTRL_MODULE);
+	parser.addSampleToPacket(static_thermal_ctrl_sample,STATIC_STR);
 
-	parser.createPacket("", "Energy");
-	Sample::Sample sample3("EnergySample", "144");
-	map<const char*,const char*> measure3;
-	measure3.insert(pair<const char*,const char*>("voltage", "2"));
-	measure3.insert(pair<const char*,const char*>("current", "3"));
-	sample3.addMeasure("Battery1", measure3);
-	parser.addSampleToPacket(sample3, "Energy");
-	printf("%s\n",&parser.getPacket("Energy")->packetToString()[0]);*/
+	string static_packet = parser.getPacket(STATIC_STR)->packetToString();
+	string energy_packet = parser.getPacket(ENERGY_STR)->packetToString();
+	string temp_packet = parser.getPacket(TEMPERATURE_STR)->packetToString();
+
+	printf("static packet:\n %s\n", &static_packet[0]);
+	printf("energy packet:\n %s\n", &energy_packet[0]);
+	printf("temp packet:\n %s\n", &temp_packet[0]);
+
+	// TODO FIX parser/sampler and add asserts to make the test fail
+
+	return 0;
 }
 

@@ -109,7 +109,7 @@ Sample::Sample Sampler::createSample(string type, bool i2c, int time, int module
 	string time_str = "";
 	time_str = int_to_string(time,time_str);
 	int value = hardware->getValue(module,i2c);
-	if (type.compare(ENERGY_STR)){
+	if (!type.compare(ENERGY_STR)){
 		// create energy sample
 		int current = hardware->getEnergyCurrent(i2c);
 		Sample::Sample energy_sample(ENERGY_SAMPLE_STR, time_str);
@@ -123,7 +123,7 @@ Sample::Sample Sampler::createSample(string type, bool i2c, int time, int module
 		energy_sample.addMeasure(BATTERY1_STR, energy_measure);
 		return energy_sample;
 	}
-	else if (type.compare(TEMPERATURE_STR)){
+	else if (!type.compare(TEMPERATURE_STR)){
 		// create temperature sample
 		Sample::Sample temp_sample(TEMPERATURE_SAMPLE_STR, time_str);
 		map<string,string> temp_measure;
@@ -133,7 +133,7 @@ Sample::Sample Sampler::createSample(string type, bool i2c, int time, int module
 		temp_sample.addMeasure(SENSOR1_STR, temp_measure);
 		return temp_sample;
 	}
-	else if (type.compare(STATIC_STR)){
+	else if (!type.compare(STATIC_STR)){
 		// create static sample
 		int status = hardware->getStatus(module);
 		Sample::Sample sample(MODULE_STR, time_str);

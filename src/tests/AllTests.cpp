@@ -22,8 +22,10 @@ char* AllTests::all_tests(){
 		mu_run_test(cmdtests.runTests);
 	if (type_tests & TLM_PARSER_TESTS)
 		mu_run_test(tlmtests.runTests);
-	if (type_tests & COMMUNICATION_HANDLER_TESTS)
-		mu_run_test(tlmtests.runTests);
+	if (type_tests & SEND_TESTS)
+		mu_run_test(sendtests.runTests);
+	if (type_tests & RECEIVE_TESTS)
+			mu_run_test(rcvtests.runTests);
 	return 0;
 }
 

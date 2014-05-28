@@ -13,15 +13,18 @@
 #include "CMDParserTests.hpp"
 #include "TLMParserTests.hpp"
 #include "UartCommunicationHandlerTests.hpp"
+#include "SendTests.hpp"
+#include "ReceiveTests.hpp"
 
 #define ALL_TESTS					 	0xFFFF
 
 #define CMD_PARSER_TESTS				0x0001
 #define TLM_PARSER_TESTS				0x0002
-#define COMMUNICATION_HANDLER_TESTS		0x0004
+#define SEND_TESTS						0x0004
 #define VALIDATOR_TESTS					0x0008
 #define WORK_QUEUE_TESTS				0x0010
 #define SEND_RECEIVE_TESTS				0x0020
+#define RECEIVE_TESTS					0x0040
 
 
 class AllTests {
@@ -29,7 +32,9 @@ private:
 	int type_tests;
 	CMDParserTests::CMDParserTests cmdtests;
 	TLMParserTests::TLMParserTests tlmtests;
+	ReceiveTests::ReceiveTests rcvtests;
 	UartCommunicationHandlerTests::UartCommunicationHandlerTests chtests;
+	SendTests::SendTests sendtests;
 public:
 	AllTests(int _type);
 	virtual ~AllTests();

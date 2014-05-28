@@ -1,0 +1,7 @@
+Simulating communication guide:
+
+1. Download and install VSPE software (Virtual Serial Ports Emulator)
+2. Download and install TeraTerm (For tests)
+3. On server (airborne system) configure virtual COM1 port and then TCP server listening on that port (using VSPE)
+4. On clients (ground station and simulator) configure virtual COM1 port and then TCP client listening to the server ip and port (usually 5555)
+5. Configure TSIM2 in debug configuration -> edit -> extra options with -fast_uart flag (EXTRA IMPORTANT! WITHOUT THIS FLAG THE DATA WILL GET LOST)

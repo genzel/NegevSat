@@ -19,6 +19,11 @@ private:
 	int sband_request;
 	int thermal_ctrl_request;
 
+	// XXX SIMULATOR FIELDS XXX
+	int set_temp_request;
+	int set_energy_request;
+	int connected_request;
+
 public:
 	ModulesOperationRequest(){
 		payload_request = NO_CHANGE;
@@ -50,6 +55,31 @@ public:
 		return thermal_ctrl_request;
 	}
 
+
+	// XXX SIMULATOR FIELDS XXX
+	void request_connected(int action){
+		connected_request = action;
+	}
+
+	int get_request_connected(){
+		return connected_request;
+	}
+
+	void request_set_temp(int action){
+		set_temp_request = action;
+	}
+
+	int get_request_set_temp(){
+		return set_temp_request;
+	}
+
+	void request_set_energy(int action){
+		set_energy_request = action;
+	}
+
+	int get_request_set_energy(){
+		return set_energy_request;
+	}
 	virtual ~ModulesOperationRequest();
 };
 

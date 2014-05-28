@@ -12,6 +12,7 @@
 #include "Sample.hpp"
 #include <string.h>
 
+
 using namespace std;
 using namespace rapidxml;
 

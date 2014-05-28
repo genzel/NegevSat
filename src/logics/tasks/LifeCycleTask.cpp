@@ -194,10 +194,10 @@ void LifeCycleTask::module_ctrl(){
 	}
 
 	if(modules_request.get_sband_request() == TURN_ON
-				&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
-				&& hardware.getTemperatureStatus() == MODULE_ON){
-			hardware.setSbandStatus(MODULE_ON);
-			modules_request.request_sband(NO_CHANGE);
+			&& (state == FACING_GROUND_STATE || state == REGULAR_OPS_STATE)
+			&& hardware.getTemperatureStatus() == MODULE_ON){
+		hardware.setSbandStatus(MODULE_ON);
+		modules_request.request_sband(NO_CHANGE);
 	}
 
 	if (modules_request.get_sband_request() == STANDBY){
@@ -215,6 +215,27 @@ void LifeCycleTask::module_ctrl(){
 		modules_request.request_thermal_ctrl(NO_CHANGE);
 	}
 
+	// XXX SIMULATOR FIELDS XXX
+	rtemsEvent event;
+	rtems_event_set out;
+	if (modules_request.get_request_connected() == TURN_ON){
+		out = RECEIVED_COMMUNICATION_EVENT;
+		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
+		modules_request.request_connected(NO_CHANGE);
+	}
+	if (modules_request.get_request_connected() == STANDBY){
+		out = LOST_COMMUNICATION_EVENT;
+		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
+		modules_request.request_connected(NO_CHANGE);
+	}
+	if (modules_request.get_request_set_energy() == TURN_ON){
+		hardware.setEnergy(1);
+		modules_request.request_set_energy(NO_CHANGE);
+	}
+	if (modules_request.get_request_set_temp() == TURN_ON){
+		hardware.setTemperature(70);
+		modules_request.request_set_temp(NO_CHANGE);
+	}
 }
 
 void LifeCycleTask::thermal_ctrl(){
