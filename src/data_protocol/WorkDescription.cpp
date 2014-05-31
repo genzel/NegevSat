@@ -29,10 +29,10 @@ int WorkDescription::getPriority(){
 	return priority;
 }
 
-void WorkDescription::setTimeStamp(int _timestamp){
+void WorkDescription::setTimeStamp(unsigned long long _timestamp){
 	timestamp = _timestamp;
 }
 
-int WorkDescription::getTimestamp(){
+unsigned long long WorkDescription::getTimestamp(){
 	return timestamp;
 }

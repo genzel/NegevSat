@@ -31,6 +31,7 @@
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_INIT_TASK_STACK_SIZE      		(4 * RTEMS_MINIMUM_STACK_SIZE)
 #define CONFIGURE_EXTRA_TASK_STACKS         		(13 * RTEMS_MINIMUM_STACK_SIZE)
+#define CONFIGURE_DRIVER_AMBAPP_GAISLER_GPTIMER
 
 #include <rtems/confdefs.h>
 #include "logics/NegevSatConstants.hpp"
@@ -45,11 +46,36 @@
 #include "data_protocol/WorkQueue.hpp"
 #include <stdio.h>
 #include "tests/AllTests.hpp"
+#include "utils/timeutils.hpp"
+#include "utils/stringutils.hpp"
+
+using namespace stringutils;
+using namespace timeutils;
 using namespace std;
 
-bool tests = true;
+bool tests = false;
 
 rtemsTask::rtemsTask* task_table[NUMBER_OF_TASKS];
+rtems_time_of_day current_time;
+
+//TODO check out automatically set those constants
+#define TIME_YEAR		2014
+#define TIME_MONTH		5
+#define TIME_DAY		31
+#define TIME_HOUR		17
+#define TIME_MINUTE		5
+#define TIME_SECONDS	30
+
+void set_time(){
+	current_time.day = TIME_DAY;
+	current_time.month = TIME_MONTH;
+	current_time.hour = TIME_HOUR;
+	current_time.minute = TIME_MINUTE;
+	current_time.second = TIME_SECONDS;
+	current_time.year = TIME_YEAR;
+	current_time.ticks = 0;
+	rtems_clock_set( &current_time );
+}
 
 extern "C"
 {
@@ -63,9 +89,19 @@ rtems_task Init(
 rtems_task Init(rtems_task_argument )
 {
 	if(tests){
-		AllTests::AllTests tests(/*CMD_PARSER_TESTS*/ /*TLM_PARSER_TESTS*/ /*SEND_TESTS*/ RECEIVE_TESTS);
+		AllTests::AllTests tests(CMD_PARSER_TESTS /*TLM_PARSER_TESTS*/ /*SEND_TESTS*/ /*RECEIVE_TESTS*/);
 		tests.run_all_tests();
 	}
+	set_time();
+
+	// create StateMachine task
+	StateMachineTask::StateMachineTask state_machine_task;
+	state_machine_task.create("STM ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
+	printf("%s\n", state_machine_task.last_status_string());
+	state_machine_task.start(0xDEADDEAD);
+	printf("%s\n", state_machine_task.last_status_string());
+
+
 	// create send task
 	SendReceiveQueue::SendReceiveQueue** send_queue_arr = new SendReceiveQueue::SendReceiveQueue* [SENDQ_SIZE];
 	for (int i=0 ; i<SENDQ_SIZE; i++){
@@ -74,7 +110,7 @@ rtems_task Init(rtems_task_argument )
 	SendTask::SendTask send_task(send_queue_arr);
 	send_task.create("SND ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
 	printf("%s\n", send_task.last_status_string());
-	send_task.start(0xDEADDEAD);
+	//send_task.start(0xDEADDEAD);
 	printf("%s\n", send_task.last_status_string());
 
 	// create receive task
@@ -108,12 +144,7 @@ rtems_task Init(rtems_task_argument )
 	life_cycle_task.start(0xDEADDEAD);
 	printf("%s\n", life_cycle_task.last_status_string());
 
-	// create StateMachine task
-	StateMachineTask::StateMachineTask state_machine_task;
-	state_machine_task.create("STM ", 1, RTEMS_MINIMUM_STACK_SIZE * 2, 0, 0, 0);
-	printf("%s\n", state_machine_task.last_status_string());
-	state_machine_task.start(0xDEADDEAD);
-	printf("%s\n", state_machine_task.last_status_string());
+
 
 	// create simulator task
 	// TODO create it!

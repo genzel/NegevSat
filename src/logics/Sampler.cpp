@@ -105,9 +105,9 @@ int energy = hardware.getEnergy(true);
 	// END of static sample
 */
 
-Sample::Sample Sampler::createSample(string type, bool i2c, int time, int module){
+Sample::Sample Sampler::createSample(string type, bool i2c, unsigned long long time, int module){
 	string time_str = "";
-	time_str = int_to_string(time,time_str);
+	time_str = unsigned_long_to_string(time,time_str);
 	int value = hardware->getValue(module,i2c);
 	if (!type.compare(ENERGY_STR)){
 		// create energy sample

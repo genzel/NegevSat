@@ -20,7 +20,7 @@ CMDParserTests::~CMDParserTests() {
 	// TODO Auto-generated destructor stub
 }
 
-char* assert_mission_is_correct(WorkDescription::WorkDescription* work, int code, int priority, int time){
+char* assert_mission_is_correct(WorkDescription::WorkDescription* work, int code, int priority, unsigned long long time){
 	mu_assert("error", work->getCode() == code);
 	mu_assert("error", work->getPriority() == priority);
 	mu_assert("error", work->getTimestamp() == time);
@@ -31,13 +31,13 @@ char* CMDParserTests::runTests(){
 	SendReceiveQueue::SendReceiveQueue* receive_queue = new SendReceiveQueue::SendReceiveQueue();
 	char missions[] = "<?xml version='1.0'?>"
 			"<packet>"
-			"<upstreamPacket time='12332'>"
-			"<mission opcode='5' priority='3' time='12334'/>"
-			"<mission opcode='4' priority='2' time='12335'/>"
-			"<mission opcode='2' priority='1' time='12336'/>"
+			"<upstreamPacket time='20140531165730'>"
+			"<mission opcode='5' priority='3' time='20140531165740'/>"
+			"<mission opcode='4' priority='2' time='20140531165750'/>"
+			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	int numBytes = 261;
+	int numBytes = 296;
 	string data(missions, numBytes);
 	receive_queue->enqueue(data);
 	string packet = receive_queue->dequeue();
@@ -51,13 +51,13 @@ char* CMDParserTests::runTests(){
 	WorkDescription::WorkDescription work2 = parsed_works.at(1);
 	WorkDescription::WorkDescription work3 = parsed_works.at(2);
 
-	if (assert_mission_is_correct(&work1, 5, 3, 12334) != 0){
+	if (assert_mission_is_correct(&work1, 5, 3, 20140531165740ULL) != 0){
 		return fail_assert;
 	}
-	if (assert_mission_is_correct(&work2, 4, 2, 12335) != 0){
+	if (assert_mission_is_correct(&work2, 4, 2, 20140531165750ULL) != 0){
 		return fail_assert;
 	}
-	if (assert_mission_is_correct(&work3, 2, 1, 12336) != 0){
+	if (assert_mission_is_correct(&work3, 2, 1, 20140531165755ULL) != 0){
 		return fail_assert;
 	}
 	return 0;

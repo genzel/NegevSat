@@ -8,7 +8,7 @@
 #include "WorkQueue.hpp"
 #include <algorithm>
 #include <assert.h>
-
+#include "data_protocol/CMDDictionary.hpp"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ bool workComparator (WorkDescription::WorkDescription i,WorkDescription::WorkDes
 }
 
 WorkQueue::WorkQueue(){
-	works.reserve(100);
+	/*works.reserve(100);*/
 	rtems_status_code status;
 	// create semaphore with 1 permit
 	status = rtems_semaphore_create(
@@ -56,18 +56,38 @@ void WorkQueue::enqueue(WorkDescription::WorkDescription work){
 	status = rtems_semaphore_release( mutex_id );
 }
 
-WorkDescription::WorkDescription WorkQueue::dequeue(){
+WorkDescription::WorkDescription WorkQueue::dequeue(bool block){
 	rtems_status_code status;
-	status = rtems_semaphore_obtain(
-			produced_count_id,
-			RTEMS_DEFAULT_OPTIONS,
-			RTEMS_NO_TIMEOUT
-	);
-	status = rtems_semaphore_obtain(
-			mutex_id,
-			RTEMS_DEFAULT_OPTIONS,
-			RTEMS_NO_TIMEOUT
-	);
+	if (block){
+		status = rtems_semaphore_obtain(
+				produced_count_id,
+				RTEMS_DEFAULT_OPTIONS,
+				RTEMS_NO_TIMEOUT
+		);
+		status = rtems_semaphore_obtain(
+				mutex_id,
+				RTEMS_DEFAULT_OPTIONS,
+				RTEMS_NO_TIMEOUT
+		);
+	}
+	else {
+		status = rtems_semaphore_obtain(
+				produced_count_id,
+				RTEMS_WAIT,
+				100
+		);
+		if (status != RTEMS_SUCCESSFUL){
+			WorkDescription::WorkDescription null_work;
+			null_work.setCode(NULL_WORK);
+			return null_work;
+		}
+		status = rtems_semaphore_obtain(
+				mutex_id,
+				RTEMS_DEFAULT_OPTIONS,
+				RTEMS_NO_TIMEOUT
+		);
+	}
+
 	WorkDescription::WorkDescription work = works.back();
 	works.pop_back();
 	status = rtems_semaphore_release( mutex_id );

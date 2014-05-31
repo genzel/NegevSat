@@ -24,7 +24,7 @@ public:
 	void setHardware(HardwareState::HardwareState* _hardware){
 		hardware = _hardware;
 	}
-	Sample::Sample createSample(string type, bool i2c, int time, int module);
+	Sample::Sample createSample(string type, bool i2c, unsigned long long time, int module);
 };
 
 #endif /* SAMPLER_HPP_ */

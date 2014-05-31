@@ -8,6 +8,7 @@
 #ifndef CMDDICTIONARY_HPP_
 #define CMDDICTIONARY_HPP_
 
+#define NULL_WORK				0
 
 #define MOVE_TO_SAFE			1
 #define MOVE_TO_STANDBY			2

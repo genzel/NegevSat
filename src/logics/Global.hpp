@@ -13,4 +13,6 @@
 
 extern rtemsTask::rtemsTask* task_table[NUMBER_OF_TASKS];
 
+extern rtems_time_of_day current_time;
+
 #endif /* GLOBAL_HPP_ */

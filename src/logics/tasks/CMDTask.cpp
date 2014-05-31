@@ -7,6 +7,10 @@
 
 #include <logics/tasks/CMDTask.hpp>
 #include <stdio.h>
+#include "utils/timeutils.hpp"
+#include "logics/Global.hpp"
+
+using namespace timeutils;
 
 CMDTask::CMDTask(WorkQueue::WorkQueue* _works, WorkQueue::WorkQueue* _rdy_works){
 	works = _works;
@@ -22,15 +26,23 @@ void CMDTask::schedule_work(WorkDescription::WorkDescription work){
 }
 
 bool CMDTask::time_has_come(WorkDescription::WorkDescription work){
-	// TODO: implement
-	return true;
+	rtems_clock_get_tod( &current_time);
+	unsigned long long curr_time = time_to_long();
+	if (work.getTimestamp() == 0)
+		return true;
+	if (curr_time >= work.getTimestamp()){
+		return true;
+	}
+	return false;
 }
 
 void CMDTask::body(rtems_task_argument argument){
 	for (;;){
 		printf(" * CMD TASK! *\n");
 		works->sortWorks();
-		WorkDescription::WorkDescription work = works->dequeue();
+		printf(" * CMD TASK::before dequeue *\n");
+		WorkDescription::WorkDescription work = works->dequeue(true);
+		printf(" * CMD TASK::after dequeue *\n");
 		if (time_has_come(work)){
 			rdy_works->enqueue(work);
 		}

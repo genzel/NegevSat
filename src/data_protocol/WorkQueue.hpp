@@ -28,7 +28,7 @@ public:
 	WorkQueue();
 	~WorkQueue(){}
 	void enqueue(WorkDescription::WorkDescription work);
-	WorkDescription::WorkDescription dequeue();
+	WorkDescription::WorkDescription dequeue(bool block);
 	void sortWorks();
 };
 

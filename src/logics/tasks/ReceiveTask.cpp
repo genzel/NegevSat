@@ -41,6 +41,7 @@ rtems_task ReceiveTask::body(rtems_task_argument argument){
 			printf(" * RECEIVE TASK:: bytes which were received are not verified *\n");
 		}
 	}
+	printf(" * RECEIVE TASK:: exiting... *\n");
 	exit(0);
 }
 

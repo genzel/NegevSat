@@ -23,7 +23,7 @@ namespace stringutils{
 string int_to_string(int number, string str);
 const char* state_to_chars (int state);
 const char* module_state_to_chars(int state);
-
+string unsigned_long_to_string(unsigned long long number, string str);
 }
 
 #endif /* STRINGUTILS_HPP_ */

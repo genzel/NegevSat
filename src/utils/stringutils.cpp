@@ -17,6 +17,13 @@ string int_to_string(int number, string str){
 	return str;
 }
 
+string unsigned_long_to_string(unsigned long long number, string str){
+	stringstream ss;
+	ss << number;
+	str = ss.str();
+	return str;
+}
+
 char* int_to_chars(int number, char* buf){
 	sprintf(buf, "%d", number);
 	return buf;

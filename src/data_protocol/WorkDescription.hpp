@@ -13,7 +13,7 @@ private:
 	int code;
 	int priority;
 	//TODO: check which data structure should we store the timestamp
-	int timestamp;
+	unsigned long long timestamp;
 	//TODO: add work params
 
 public:
@@ -23,8 +23,8 @@ public:
 	int getCode();
 	void setPriority(int _priority);
 	int getPriority();
-	void setTimeStamp(int _timestamp);
-	int getTimestamp();
+	void setTimeStamp(unsigned long long _timestamp);
+	unsigned long long getTimestamp();
 };
 
 

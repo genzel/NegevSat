@@ -60,7 +60,9 @@ void MPTask::body(rtems_task_argument argument){
 	unsigned int i;
 	for (;;){
 		printf(" * MP TASK! *\n");
+		printf(" * MP TASK::before dequeue *\n");
 		string packet = receive_queue->dequeue();
+		printf(" * MP TASK::after dequeue *\n");
 		validator->buildPacket(packet);
 		if (validateMessage()){
 

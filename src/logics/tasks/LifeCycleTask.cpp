@@ -12,7 +12,9 @@
 #include "logics/NegevSatConstants.hpp"
 #include "logics/SendReceiveConf.hpp"
 #include <rtems++/rtemsEvent.h>
+#include "utils/timeutils.hpp"
 
+using namespace timeutils;
 using namespace std;
 using namespace stringutils;
 
@@ -33,7 +35,7 @@ LifeCycleTask::~LifeCycleTask() {
  * Write the results of the algorithms calculation to I2C
  */
 void LifeCycleTask::control_command(){
-	printf(" * LifeCycle TASK:: control_command *\n");
+	//printf(" * LifeCycle TASK:: control_command *\n");
 	if (state == SAFE_STATE){
 		printf(" * LifeCycle TASK:: control_command - SUN POINTING *\n");
 		// simulating charging the batter here when pointing the sun
@@ -42,7 +44,7 @@ void LifeCycleTask::control_command(){
 		hardware.setEnergy(voltage);
 	}
 	if (state == REGULAR_OPS_STATE || state == FACING_GROUND_STATE){
-		printf(" * LifeCycle TASK:: control_command - EARTH POINTING *\n");
+		//printf(" * LifeCycle TASK:: control_command - EARTH POINTING *\n");
 	}
 	//in INIT and STANDBY modes no actions to take
 }
@@ -52,14 +54,14 @@ void LifeCycleTask::control_command(){
  * perform computation
  */
 void LifeCycleTask::control_algorithmics(){
-	printf(" * LifeCycle TASK:: control_algorithmics *\n");
+	//printf(" * LifeCycle TASK:: control_algorithmics *\n");
 }
 
 /**
  * check on which state the satellite is atm
  */
 void LifeCycleTask::obtain_state(){
-	printf(" * LifeCycle TASK:: obtain_state *\n");
+	//printf(" * LifeCycle TASK:: obtain_state *\n");
 	rtemsEvent event;
 	rtems_event_set out;
 	rtems_status_code status = event.receive(RTEMS_ALL_EVENTS, out, 0, rtemsEvent::no_wait, rtemsEvent::any);
@@ -88,14 +90,15 @@ void LifeCycleTask::obtain_state(){
  * Samples control unit - critical samples (read using I2C)
  */
 void LifeCycleTask::control_unit_samples(){
-	printf(" * LifeCycle TASK:: control_unit_samples *\n");
-	//TODO ADD TIMER!!!!!
+	//printf(" * LifeCycle TASK:: control_unit_samples *\n");
+
 	if (samples_counter == 0){
 		parser.createPacket("",ENERGY_STR);
 		parser.createPacket("", TEMPERATURE_STR);
 		parser.createPacket(state_to_chars(state),STATIC_STR);
 	}
-	int time = 10;
+	rtems_clock_get_tod( &current_time);
+	unsigned long long time = time_to_long();
 	// create energy sample
 	Sample::Sample energy_sample = sampler.createSample(ENERGY_STR, true, time, HW_ENERGY_MODULE);
 	parser.addSampleToPacket(energy_sample,ENERGY_STR);
@@ -132,14 +135,14 @@ void LifeCycleTask::control_unit_samples(){
 }
 
 void LifeCycleTask::attitude_control(){
-	printf(" * LifeCycle TASK:: attitude_control *\n");
+	//printf(" * LifeCycle TASK:: attitude_control *\n");
 	control_unit_samples();
 	control_algorithmics();
 	control_command();
 }
 
 void LifeCycleTask::logics(){
-	printf(" * LifeCycle TASK:: logics *\n");
+	//printf(" * LifeCycle TASK:: logics *\n");
 	// TODO Add logics when state machine is rdy
 	if (hardware.getEnergyStatus() == MODULE_MALFUNCTION){
 		rtemsEvent event;
@@ -151,12 +154,13 @@ void LifeCycleTask::logics(){
 
 void LifeCycleTask::perform_cmd(){
 	printf(" * LifeCycle TASK:: perform_cmd *\n");
-	WorkDescription::WorkDescription work = rdy_works->dequeue();
-	executor.execute(work);
+	WorkDescription::WorkDescription work = rdy_works->dequeue(false);
+	if (work.getCode() != NULL_WORK)
+		executor.execute(work);
 }
 
 void LifeCycleTask::monitoring(){
-	printf(" * LifeCycle TASK:: monitoring *\n");
+	//printf(" * LifeCycle TASK:: monitoring *\n");
 	int voltage = hardware.getEnergy(false);
 	int current = hardware.getEnergyCurrent(false);
 	int temp = hardware.getTemperature(false);
@@ -173,7 +177,7 @@ void LifeCycleTask::monitoring(){
 
 void LifeCycleTask::module_ctrl(){
 
-	printf(" * LifeCycle TASK:: module ctrl *\n");
+	//printf(" * LifeCycle TASK:: module ctrl *\n");
 
 	if (state == SAFE_STATE){
 		printf(" * LifeCycle TASK:: module ctrl - SAFE! turning off unneeded modules *\n");
@@ -239,7 +243,7 @@ void LifeCycleTask::module_ctrl(){
 }
 
 void LifeCycleTask::thermal_ctrl(){
-	printf(" * LifeCycle TASK:: thermal ctrl *\n");
+	//printf(" * LifeCycle TASK:: thermal ctrl *\n");
 	if (hardware.getTemperatureStatus() == MODULE_MALFUNCTION){
 		printf(" * LifeCycle TASK:: thermal ctrl - module malfunction *\n");
 		int temp = hardware.getTemperature(false);
@@ -252,14 +256,16 @@ void LifeCycleTask::thermal_ctrl(){
 void LifeCycleTask::body(rtems_task_argument argument){
 	// TODO pay attention and act differently on each state using events
 	for (;;){
-		printf(" * LifeCycle TASK! *\n");
+		//printf(" * LifeCycle TASK! *\n");
 		obtain_state();
+		/*if (state != INIT_STATE){*/
 		attitude_control();
 		logics();
 		perform_cmd();
 		monitoring();
 		module_ctrl(); // turn on or off modules
 		thermal_ctrl();
+		/*}*/
 	}
 	exit(0);
 }
