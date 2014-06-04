@@ -12,6 +12,7 @@
 #include "minunit.h"
 #include "logics/Sampler.hpp"
 #include "hardware/HardwareState.hpp"
+#include <iostream>
 
 class TLMParserTests {
 private:
@@ -21,6 +22,7 @@ private:
 public:
 	TLMParserTests();
 	virtual ~TLMParserTests();
+	void create_packets();
 	char* runTests();
 };
 

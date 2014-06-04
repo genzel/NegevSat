@@ -13,6 +13,7 @@
 #include "CMDParserTests.hpp"
 #include "TLMParserTests.hpp"
 #include "UartCommunicationHandlerTests.hpp"
+#include "XMLValidatorTests.hpp"
 #include "SendTests.hpp"
 #include "ReceiveTests.hpp"
 
@@ -34,6 +35,7 @@ private:
 	TLMParserTests::TLMParserTests tlmtests;
 	ReceiveTests::ReceiveTests rcvtests;
 	UartCommunicationHandlerTests::UartCommunicationHandlerTests chtests;
+	XMLValidatorTests::XMLValidatorTests validatortests;
 	SendTests::SendTests sendtests;
 public:
 	AllTests(int _type);

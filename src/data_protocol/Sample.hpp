@@ -25,7 +25,7 @@ public:
 	void addMeasure(string name, map<string,string> values);
 	string getName();
 	string getTime();
-	map<string,map<string,string> >* getMeasures();
+	map<string,map<string,string> > getMeasures();
 
 };
 

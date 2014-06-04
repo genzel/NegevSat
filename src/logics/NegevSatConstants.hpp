@@ -11,8 +11,8 @@
 #include <rtems++/rtemsTask.h>
 
 //tasks
-#define NUMBER_OF_TASKS					7
-#define NUMBER_OF_PASSIVE_TASKS			2
+#define NUMBER_OF_TASKS					6
+#define NUMBER_OF_PASSIVE_TASKS			1
 #define NUMBER_OF_ACTIVE_TASKS			NUMBER_OF_TASKS - NUMBER_OF_PASSIVE_TASKS
 
 #define SEND_TASK_INDEX					0
@@ -21,9 +21,6 @@
 #define CMD_TASK_INDEX					3
 #define LIFE_CYCLE_TASK_INDEX			4
 #define STATE_MACHINE_TASK_INDEX		5
-#define SIMULATOR_TASK_INDEX			6
-
-
 
 
 // satellite states enums
@@ -34,6 +31,7 @@
 #define FACING_GROUND_STATE		4
 
 // satellite states events - these events are relevant to all tasks and should not be overwritten
+// e.g when state machine moves to another state, it sends those events to all tasks to inform the new state
 #define INIT_STATE_EVENT			RTEMS_EVENT_0
 #define STANDBY_STATE_EVENT			RTEMS_EVENT_1
 #define SAFE_STATE_EVENT			RTEMS_EVENT_2
@@ -46,7 +44,8 @@
 #define TEMP_SEND 				RTEMS_EVENT_12
 #define MIXED_SEND 				RTEMS_EVENT_13
 
-// state machine task events
+// state machine events (state machine receives these events)
+// when tasks ask the state machine to change state to another state
 #define MOVE_TO_SAFE_EVENT					RTEMS_EVENT_10
 #define MOVE_TO_STANDBY_EVENT				RTEMS_EVENT_11
 #define MOVE_TO_OP_EVENT					RTEMS_EVENT_12

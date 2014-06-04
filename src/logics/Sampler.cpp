@@ -105,14 +105,14 @@ int energy = hardware.getEnergy(true);
 	// END of static sample
 */
 
-Sample::Sample Sampler::createSample(string type, bool i2c, unsigned long long time, int module){
+Sample::Sample* Sampler::createSample(string type, bool i2c, unsigned long long time, int module){
 	string time_str = "";
 	time_str = unsigned_long_to_string(time,time_str);
 	int value = hardware->getValue(module,i2c);
 	if (!type.compare(ENERGY_STR)){
 		// create energy sample
 		int current = hardware->getEnergyCurrent(i2c);
-		Sample::Sample energy_sample(ENERGY_SAMPLE_STR, time_str);
+		Sample::Sample* energy_sample = new Sample::Sample(ENERGY_SAMPLE_STR, time_str);
 		map<string,string> energy_measure;
 		string energy_str = "";
 		string current_str = "";
@@ -120,33 +120,33 @@ Sample::Sample Sampler::createSample(string type, bool i2c, unsigned long long t
 		current_str = int_to_string(current,current_str);
 		energy_measure.insert(pair<string,string>(VOLTAGE_STR, energy_str));
 		energy_measure.insert(pair<string,string>(CURRENT_STR, current_str));
-		energy_sample.addMeasure(BATTERY1_STR, energy_measure);
+		energy_sample->addMeasure(BATTERY1_STR, energy_measure);
 		return energy_sample;
 	}
 	else if (!type.compare(TEMPERATURE_STR)){
 		// create temperature sample
-		Sample::Sample temp_sample(TEMPERATURE_SAMPLE_STR, time_str);
+		Sample::Sample* temp_sample = new Sample::Sample(TEMPERATURE_SAMPLE_STR, time_str);
 		map<string,string> temp_measure;
 		string temp_str = "";
 		temp_str = int_to_string(value,temp_str);
 		temp_measure.insert(pair<string,string>(TEMP_STR, temp_str));
-		temp_sample.addMeasure(SENSOR1_STR, temp_measure);
+		temp_sample->addMeasure(SENSOR1_STR, temp_measure);
 		return temp_sample;
 	}
 	else if (!type.compare(STATIC_STR)){
 		// create static sample
 		int status = hardware->getStatus(module);
-		Sample::Sample sample(MODULE_STR, time_str);
+		Sample::Sample* sample = new Sample::Sample(MODULE_STR, time_str);
 		map<string,string> measure;
 		measure.insert(pair<string,string>(NAME_STR, hardware->getName(module)));
 		measure.insert(pair<string,string>(STATUS_STR, module_state_to_chars(status)));
-		sample.addMeasure(INFO_STR, measure);
+		sample->addMeasure(INFO_STR, measure);
 		return sample;
 	}
 	else {
 		// TODO throw exception here!
 		printf(" * LifeCycle TASK::Sample: Illegal type of sample! *\n");
-		Sample::Sample sample(MODULE_STR, time_str);
+		Sample::Sample* sample = new Sample::Sample(MODULE_STR, time_str);
 		return sample;
 	}
 }

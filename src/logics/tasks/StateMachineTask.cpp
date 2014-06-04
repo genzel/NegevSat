@@ -61,7 +61,7 @@ private:
 // Satellite's initialize state
 SUBSTATE(InitState, Top) {
 	STATE(InitState)
-				void work();
+																void work();
 private:
 	void init();
 };
@@ -71,7 +71,7 @@ private:
 SUBSTATE(Operational, Top) {
 	STATE(Operational)
 
-						void work();
+																		void work();
 private:
 	void init();
 };
@@ -80,7 +80,7 @@ private:
 SUBSTATE(FacingGroundStation, Operational) {
 	STATE(FacingGroundStation)
 
-													void work();
+																									void work();
 
 private:
 	void init();
@@ -90,7 +90,7 @@ private:
 SUBSTATE(RegularOperations, Operational) {
 	STATE(RegularOperations)
 
-															void work();
+																											void work();
 
 private:
 	void init();
@@ -100,7 +100,7 @@ private:
 SUBSTATE(Safe, Top) {
 	STATE(Safe)
 
-															void work();
+																											void work();
 
 private:
 	void init();
@@ -110,7 +110,7 @@ private:
 SUBSTATE(Standby, Top) {
 	STATE(Standby)
 
-															void work();
+																											void work();
 
 private:
 	void init();
@@ -156,10 +156,22 @@ void RegularOperations::init() {
 void RegularOperations::work() {
 	printf(" * StateMachine TASK:: RegularOperations::work *\n");
 	rtems_task_wake_after(
-	      2 * 5 * rtems_clock_get_ticks_per_second());
-
+			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	switch (set){
+	printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
+	if (set != NO_EVENT_RECEIVED){
+		if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
+		}
+		if (set & RECEIVED_COMMUNICATION_EVENT){
+			setState<FacingGroundStation>();
+		}
+		if (set & MOVE_TO_SAFE_EVENT){
+			setState<Safe>();
+		}
+	}
+
+	/*switch (set){
 	case MOVE_TO_SAFE_EVENT:
 		setState<Safe>();
 		break;
@@ -169,7 +181,7 @@ void RegularOperations::work() {
 	case RECEIVED_COMMUNICATION_EVENT:
 		setState<FacingGroundStation>();
 		break;
-	}
+	}*/
 }
 
 // State FacingGroundStation
@@ -182,9 +194,24 @@ void FacingGroundStation::init() {
 }
 
 void FacingGroundStation::work() {
-	//printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
+	printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
+	rtems_task_wake_after(
+			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	switch (set){
+	printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
+	if (set != NO_EVENT_RECEIVED){
+		if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
+		}
+		if (set & LOST_COMMUNICATION_EVENT){
+			setState<RegularOperations>();
+		}
+		if (set & MOVE_TO_SAFE_EVENT){
+			setState<Safe>();
+		}
+	}
+
+	/*switch (set){
 	case MOVE_TO_SAFE_EVENT:
 		setState<Safe>();
 		break;
@@ -194,7 +221,7 @@ void FacingGroundStation::work() {
 	case LOST_COMMUNICATION_EVENT:
 		setState<RegularOperations>();
 		break;
-	}
+	}*/
 }
 
 // State Safe
@@ -209,16 +236,24 @@ void Safe::init() {
 void Safe::work() {
 	printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
 	rtems_task_wake_after(
-		      2 * 5 * rtems_clock_get_ticks_per_second());
+			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	switch (set){
+	if (set != NO_EVENT_RECEIVED){
+		if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
+		}
+		if (set & MOVE_TO_OP_EVENT){
+			setState<Operational>();
+		}
+	}
+	/*switch (set){
 	case MOVE_TO_OP_EVENT:
 		setState<Operational>();
 		break;
 	case MOVE_TO_STANDBY_EVENT:
 		setState<Standby>();
 		break;
-	}
+	}*/
 }
 
 // State Standby
@@ -232,12 +267,19 @@ void Standby::init() {
 
 void Standby::work() {
 	//printf(" * StateMachine TASK:: Standby::work *\n");
+	rtems_task_wake_after(
+			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	switch (set){
+	if (set != NO_EVENT_RECEIVED){
+		if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
+		}
+	}
+	/*switch (set){
 	case MOVE_TO_SAFE_EVENT:
 		setState<Safe>();
 		break;
-	}
+	}*/
 }
 
 } // namespace Satellite

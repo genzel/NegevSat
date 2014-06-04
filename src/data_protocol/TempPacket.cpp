@@ -14,7 +14,7 @@ TempPacket::TempPacket(string _type) {
 }
 
 TempPacket::~TempPacket() {
-	// TODO Auto-generated destructor stub
+	clearSamples();
 }
 
 string TempPacket::packetToString(){

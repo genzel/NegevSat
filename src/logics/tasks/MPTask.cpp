@@ -65,7 +65,6 @@ void MPTask::body(rtems_task_argument argument){
 		printf(" * MP TASK::after dequeue *\n");
 		validator->buildPacket(packet);
 		if (validateMessage()){
-
 			vector<WorkDescription::WorkDescription> parsed_works = parseMessage();
 			for (i=0; i<parsed_works.size(); i++){
 				enqueueToWorks(parsed_works.at(i));

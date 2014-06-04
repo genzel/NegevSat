@@ -65,6 +65,13 @@ const char* module_state_to_chars(int state){
 	}
 }
 
+string trim_spaces_tabs_newlines(string s){
+	s.erase(remove(s.begin(), s.end(), '\t'), s.end());
+	s.erase(remove(s.begin(), s.end(), ' '), s.end());
+	s.erase(remove(s.begin(), s.end(), '\n'), s.end());
+	return s;
+}
+
 }
 
 

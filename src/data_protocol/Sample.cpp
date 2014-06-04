@@ -34,6 +34,6 @@ string Sample::getTime(){
 	return time;
 }
 
-map<string,map<string,string> >* Sample::getMeasures(){
-	return &measures;
+map<string,map<string,string> > Sample::getMeasures(){
+	return measures;
 }

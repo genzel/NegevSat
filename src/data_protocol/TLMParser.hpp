@@ -26,7 +26,7 @@ public:
 	TLMParser ();
 	~TLMParser(){}
 	void createPacket(const char* state, const char* type);
-	void addSampleToPacket(Sample::Sample& sample,string type);
+	void addSampleToPacket(Sample::Sample* sample,string type);
 	TempPacket::TempPacket* getPacket(string type);
 	void removePacket(string type);
 };

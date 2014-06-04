@@ -52,16 +52,14 @@ bool UartCommunicationHandler::send(char* buffer, int length){
 string UartCommunicationHandler::receive(){
 	int numBytes = 0;
 	char buffer[BUFF_SIZE];
-	printf ("*** opening uart ***\n");
 	int fd = open("/dev/console_b", O_RDWR /*| O_NOCTTY | _FNDELAY*/);
 	if (fd == -1){
 		return "";
 	}
-	printf ("\nOpened COM1, fd=%d\n", fd);
-
+	//printf ("\nOpened COM1, fd=%d\n", fd);
 	numBytes = read(fd,buffer,BUFF_SIZE-1);
 	if (numBytes < 0) {
-		printf ("read error!!!\n");
+		//printf ("receive error!!!\n");
 		close(fd);
 		return "";
 		// TODO exception handling
@@ -69,17 +67,13 @@ string UartCommunicationHandler::receive(){
 	else {
 		buffer[numBytes] = 0; // terminate
 	}
-	printf(buffer);
-	printf("\n buffer ^");
 	close(fd);
-	printf("%s\n",buffer);
 	string data(buffer, numBytes+1);
-	printf("%s\n",&data[0]);
 	return data;
 }
 
 bool UartCommunicationHandler::verifyBytes(string msg){
-	// TODO check out to implement
+	// TODO add CRC or other verification in future versions
 	if (msg.compare("") == 0){
 		return false;
 	}

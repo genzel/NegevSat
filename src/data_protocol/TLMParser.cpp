@@ -66,16 +66,16 @@ void TLMParser::createPacket(const char* state, const char* type){
 	//cout << "printing xml: " << endl << root;
 }
 
-void TLMParser::addSampleToPacket(Sample::Sample& sample,string type){
+void TLMParser::addSampleToPacket(Sample::Sample* sample,string type){
 	//find the needed packet
 	TempPacket::TempPacket* packet = getPacket(type);
 	xml_document<>* root = packet->getRoot();
 	// create sample node
-	xml_node<>* sample_node = root->allocate_node(node_element,sample.getName().c_str());
-	sample_node->append_attribute(root->allocate_attribute(TIME_STR, sample.getTime().c_str()));
+	xml_node<>* sample_node = root->allocate_node(node_element,sample->getName().c_str());
+	sample_node->append_attribute(root->allocate_attribute(TIME_STR, sample->getTime().c_str()));
 	map<string , map<string,string> >::iterator pos;
-	map<string , map<string,string> >* measures = sample.getMeasures();
-	for (pos = measures->begin(); pos != measures->end(); ++pos){
+	map<string , map<string,string> > measures = sample->getMeasures();
+	for (pos = measures.begin(); pos != measures.end(); ++pos){
 		xml_node<>* node = root->allocate_node(node_element,pos->first.c_str());
 		map<string , string>::iterator attr_pos;
 		map<string , string>* attrs = &pos->second;
@@ -85,16 +85,22 @@ void TLMParser::addSampleToPacket(Sample::Sample& sample,string type){
 		sample_node->append_node(node);
 	}
 	packet->getSamplingNode()->append_node(sample_node);
+	packet->addSample(sample);
+	//delete(sample);
 }
 
 void TLMParser::removePacket(string type){
 	unsigned int i;
 	unsigned int index;
+	TempPacket::TempPacket* packet;
 	for (i=0; i<packets.size(); i++){
 		if (packets.at(i)->getType().compare(type) == 0) {
 			index = i;
+			packet = packets.at(i);
+			break;
 		}
 	}
 	packets.erase(packets.begin() + index);
+	delete(packet);
 }
 

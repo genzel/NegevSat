@@ -9,6 +9,8 @@
 #define TEMPPACKET_HPP_
 
 #include "third_party/rapidxml.hpp"
+#include <vector>
+#include "data_protocol/Sample.hpp"
 #include <string>
 
 using namespace std;
@@ -21,6 +23,7 @@ private:
 	string type;
 	xml_document<> root;
 	xml_node<>* sampling_node;
+	vector<Sample::Sample*> samples;
 
 public:
 	TempPacket(string _type);
@@ -31,6 +34,16 @@ public:
 
 	void setSamplingNode(xml_node<>* node){
 		sampling_node = node;
+	}
+
+	void addSample(Sample::Sample* s){
+		samples.push_back(s);
+	}
+
+	void clearSamples(){
+		for (unsigned int i=0; i<samples.size(); i++){
+			delete(samples.at(i));
+		}
 	}
 
 	string getType(){

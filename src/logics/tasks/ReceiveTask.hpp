@@ -19,6 +19,7 @@ class ReceiveTask : public rtemsTask{
 private:
 	ICommunicationHandler::ICommunicationHandler* comm_handler;
 	SendReceiveQueue::SendReceiveQueue* receive_queue;
+	bool connected;
 
 protected:
 	virtual void body(rtems_task_argument argument);
@@ -26,6 +27,7 @@ protected:
 public:
 	ReceiveTask(SendReceiveQueue::SendReceiveQueue* receiveQ);
 	virtual ~ReceiveTask();
+	void obtain_state();
 	string receive();
 	void enqueue_message(string msg);
 };

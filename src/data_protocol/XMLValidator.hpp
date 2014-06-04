@@ -17,6 +17,7 @@ using namespace rapidxml;
 class XMLValidator : public IValidator {
 private:
 	xml_document<> root;
+	bool first_use;
 public:
 	XMLValidator ();
 	~XMLValidator(){}

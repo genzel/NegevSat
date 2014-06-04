@@ -7,7 +7,7 @@
 
 #include "SendReceiveQueue.hpp"
 #include <assert.h>
-
+#include <stdio.h>
 using namespace std;
 
 SendReceiveQueue::SendReceiveQueue(){

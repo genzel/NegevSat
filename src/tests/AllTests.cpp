@@ -25,7 +25,9 @@ char* AllTests::all_tests(){
 	if (type_tests & SEND_TESTS)
 		mu_run_test(sendtests.runTests);
 	if (type_tests & RECEIVE_TESTS)
-			mu_run_test(rcvtests.runTests);
+		mu_run_test(rcvtests.runTests);
+	if (type_tests & VALIDATOR_TESTS)
+		mu_run_test(validatortests.runTests);
 	return 0;
 }
 

@@ -66,22 +66,21 @@ void LifeCycleTask::obtain_state(){
 	rtems_event_set out;
 	rtems_status_code status = event.receive(RTEMS_ALL_EVENTS, out, 0, rtemsEvent::no_wait, rtemsEvent::any);
 	if (status == RTEMS_SUCCESSFUL){
-		switch (out){
-		case INIT_STATE_EVENT:
+		if (out & INIT_STATE_EVENT){
 			state = INIT_STATE;
-			break;
-		case STANDBY_STATE_EVENT:
+		}
+		if (out & STANDBY_STATE_EVENT){
 			state = STANDBY_STATE;
-			break;
-		case SAFE_STATE_EVENT:
+		}
+		if (out & SAFE_STATE_EVENT){
 			state = SAFE_STATE;
-			break;
-		case REGULAR_OPS_STATE_EVENT:
+		}
+		if (out & REGULAR_OPS_STATE_EVENT){
 			state = REGULAR_OPS_STATE;
-			break;
-		case FACING_GROUND_STATE_EVENT:
+		}
+		if (out & FACING_GROUND_STATE_EVENT){
+			printf(" * LifeCycle TASK:: FACING GROUND! *\n");
 			state = FACING_GROUND_STATE;
-			break;
 		}
 	}
 }
@@ -95,43 +94,43 @@ void LifeCycleTask::control_unit_samples(){
 	if (samples_counter == 0){
 		parser.createPacket("",ENERGY_STR);
 		parser.createPacket("", TEMPERATURE_STR);
-		parser.createPacket(state_to_chars(state),STATIC_STR);
 	}
+	parser.createPacket(state_to_chars(state),STATIC_STR);
 	rtems_clock_get_tod( &current_time);
 	unsigned long long time = time_to_long();
 	// create energy sample
-	Sample::Sample energy_sample = sampler.createSample(ENERGY_STR, true, time, HW_ENERGY_MODULE);
+	Sample::Sample* energy_sample = sampler.createSample(ENERGY_STR, true, time, HW_ENERGY_MODULE);
 	parser.addSampleToPacket(energy_sample,ENERGY_STR);
 	// create temperature sample
-	Sample::Sample temp_sample = sampler.createSample(TEMPERATURE_STR, true, time, HW_TEMP_MODULE);
+	Sample::Sample* temp_sample = sampler.createSample(TEMPERATURE_STR, true, time, HW_TEMP_MODULE);
 	parser.addSampleToPacket(temp_sample,TEMPERATURE_STR);
 
 	// create static samples
-	Sample::Sample static_sband_sample = sampler.createSample(STATIC_STR, true, time, HW_SBAND_MODULE);
+	Sample::Sample* static_sband_sample = sampler.createSample(STATIC_STR, true, time, HW_SBAND_MODULE);
 	parser.addSampleToPacket(static_sband_sample,STATIC_STR);
-	Sample::Sample static_temp_sample = sampler.createSample(STATIC_STR, true, time, HW_TEMP_MODULE);
+	Sample::Sample* static_temp_sample = sampler.createSample(STATIC_STR, true, time, HW_TEMP_MODULE);
 	parser.addSampleToPacket(static_temp_sample,STATIC_STR);
-	Sample::Sample static_energy_sample = sampler.createSample(STATIC_STR, true, time, HW_ENERGY_MODULE);
+	Sample::Sample* static_energy_sample = sampler.createSample(STATIC_STR, true, time, HW_ENERGY_MODULE);
 	parser.addSampleToPacket(static_energy_sample,STATIC_STR);
-	Sample::Sample static_solarp_sample = sampler.createSample(STATIC_STR, true, time, HW_SOLARP_MODULE);
+	Sample::Sample* static_solarp_sample = sampler.createSample(STATIC_STR, true, time, HW_SOLARP_MODULE);
 	parser.addSampleToPacket(static_solarp_sample,STATIC_STR);
-	Sample::Sample static_payload_sample = sampler.createSample(STATIC_STR, true, time, HW_PAYLOAD_MODULE);
+	Sample::Sample* static_payload_sample = sampler.createSample(STATIC_STR, true, time, HW_PAYLOAD_MODULE);
 	parser.addSampleToPacket(static_payload_sample,STATIC_STR);
-	Sample::Sample static_thermal_ctrl_sample = sampler.createSample(STATIC_STR, true, time, HW_TERMAL_CTRL_MODULE);
+	Sample::Sample* static_thermal_ctrl_sample = sampler.createSample(STATIC_STR, true, time, HW_TERMAL_CTRL_MODULE);
 	parser.addSampleToPacket(static_thermal_ctrl_sample,STATIC_STR);
 
 	samples_counter++;
 	// when packets are filled with details push them into the send queues and remove them from
 	// parser to prevent memory leak and keep the invariant that parser always keeps 3 packets ONLY!
 	if (samples_counter == MAX_SAMPLES){
-		send_queues[SENDQ_STATIC_INDEX]->enqueue(parser.getPacket(STATIC_STR)->packetToString());
-		parser.removePacket(STATIC_STR);
 		send_queues[SENDQ_ENERGY_INDEX]->enqueue(parser.getPacket(ENERGY_STR)->packetToString());
 		parser.removePacket(ENERGY_STR);
 		send_queues[SENDQ_TEMP_INDEX]->enqueue(parser.getPacket(TEMPERATURE_STR)->packetToString());
 		parser.removePacket(TEMPERATURE_STR);
 		samples_counter = 0;
 	}
+	send_queues[SENDQ_STATIC_INDEX]->enqueue(parser.getPacket(STATIC_STR)->packetToString());
+	parser.removePacket(STATIC_STR);
 }
 
 void LifeCycleTask::attitude_control(){
@@ -143,17 +142,20 @@ void LifeCycleTask::attitude_control(){
 
 void LifeCycleTask::logics(){
 	//printf(" * LifeCycle TASK:: logics *\n");
-	// TODO Add logics when state machine is rdy
+	rtemsEvent event;
+	rtems_event_set out;
 	if (hardware.getEnergyStatus() == MODULE_MALFUNCTION){
-		rtemsEvent event;
-		rtems_event_set out;
 		out = MOVE_TO_SAFE_EVENT;
+		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
+	}
+	if (state == SAFE_STATE && hardware.getEnergyStatus() == MODULE_ON){
+		out = MOVE_TO_OP_EVENT;
 		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
 	}
 }
 
 void LifeCycleTask::perform_cmd(){
-	printf(" * LifeCycle TASK:: perform_cmd *\n");
+	//printf(" * LifeCycle TASK:: perform_cmd *\n");
 	WorkDescription::WorkDescription work = rdy_works->dequeue(false);
 	if (work.getCode() != NULL_WORK)
 		executor.execute(work);
@@ -172,6 +174,9 @@ void LifeCycleTask::monitoring(){
 	}
 	if (temp > MAX_PROPER_TEMPERATURE){
 		hardware.setTemperatureStatus(MODULE_MALFUNCTION);
+	}
+	if (voltage >= MIN_PROPER_VOLTAGE){
+		hardware.setEnergyStatus(MODULE_ON);
 	}
 }
 

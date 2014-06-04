@@ -21,13 +21,15 @@ private:
 	SendReceiveQueue::SendReceiveQueue** sendQueues;
 	int send_type;
 	int packet_counter;
-	bool conncted;
+	bool connected;
 
 protected:
 	virtual void body(rtems_task_argument argument);
 
 public:
 	SendTask(SendReceiveQueue::SendReceiveQueue** sendQ);
+	void obtain_state();
+	void obtain_send_type();
 	void send(string packet);
 	string dequeueMessage(int index);
 };
