@@ -8,6 +8,7 @@
 #ifndef SENDRECEIVEQUEUE_HPP_
 #define SENDRECEIVEQUEUE_HPP_
 
+#include <deque>
 #include <queue>
 #include <string>
 #include <rtems.h>
@@ -15,13 +16,16 @@
 
 using namespace std;
 
+#define SEND_RECEIVE_QUEUE_SIZE				2048
+
 class SendReceiveQueue {
 
 private:
-	queue<string> pending_messages;
+	int size;
+	deque<string> pending_messages;
 	rtems_id mutex_id;
 	rtems_id produced_count_id;
-	//rtemsSemaphore::rtemsSemaphore* sem;
+
 public:
 	SendReceiveQueue ();
 	~SendReceiveQueue(){}

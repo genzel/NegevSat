@@ -40,8 +40,11 @@ void LifeCycleTask::control_command(){
 		printf(" * LifeCycle TASK:: control_command - SUN POINTING *\n");
 		// simulating charging the batter here when pointing the sun
 		int voltage = hardware.getEnergy(false);
-		voltage++;
-		hardware.setEnergy(voltage);
+		if (voltage < MAX_PROPER_VOLTAGE){
+			voltage++;
+			printf(" * LifeCycle TASK:: control_command - CHARGING BATTERY %d V *\n", voltage);
+			hardware.setEnergy(voltage);
+		}
 	}
 	if (state == REGULAR_OPS_STATE || state == FACING_GROUND_STATE){
 		//printf(" * LifeCycle TASK:: control_command - EARTH POINTING *\n");
@@ -133,9 +136,10 @@ void LifeCycleTask::control_unit_samples(){
 	parser.removePacket(STATIC_STR);
 }
 
-void LifeCycleTask::attitude_control(){
+void LifeCycleTask::attitude_control(int counter){
 	//printf(" * LifeCycle TASK:: attitude_control *\n");
-	control_unit_samples();
+	if (counter == 0)
+		control_unit_samples();
 	control_algorithmics();
 	control_command();
 }
@@ -177,6 +181,9 @@ void LifeCycleTask::monitoring(){
 	}
 	if (voltage >= MIN_PROPER_VOLTAGE){
 		hardware.setEnergyStatus(MODULE_ON);
+	}
+	if (temp <= MAX_PROPER_TEMPERATURE){
+		hardware.setTemperatureStatus(MODULE_ON);
 	}
 }
 
@@ -238,11 +245,11 @@ void LifeCycleTask::module_ctrl(){
 		modules_request.request_connected(NO_CHANGE);
 	}
 	if (modules_request.get_request_set_energy() == TURN_ON){
-		hardware.setEnergy(1);
+		hardware.setEnergy(0);
 		modules_request.request_set_energy(NO_CHANGE);
 	}
 	if (modules_request.get_request_set_temp() == TURN_ON){
-		hardware.setTemperature(70);
+		hardware.setTemperature(45);
 		modules_request.request_set_temp(NO_CHANGE);
 	}
 }
@@ -260,16 +267,19 @@ void LifeCycleTask::thermal_ctrl(){
 
 void LifeCycleTask::body(rtems_task_argument argument){
 	// TODO pay attention and act differently on each state using events
+	int count = 0;
 	for (;;){
 		//printf(" * LifeCycle TASK! *\n");
 		obtain_state();
 		/*if (state != INIT_STATE){*/
-		attitude_control();
+		attitude_control(count);
 		logics();
 		perform_cmd();
 		monitoring();
 		module_ctrl(); // turn on or off modules
 		thermal_ctrl();
+		count++;
+		count = count % 5;
 		/*}*/
 	}
 	exit(0);

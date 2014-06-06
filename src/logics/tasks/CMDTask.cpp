@@ -40,9 +40,7 @@ void CMDTask::body(rtems_task_argument argument){
 	for (;;){
 		printf(" * CMD TASK! *\n");
 		works->sortWorks();
-		printf(" * CMD TASK::before dequeue *\n");
 		WorkDescription::WorkDescription work = works->dequeue(true);
-		printf(" * CMD TASK::after dequeue *\n");
 		if (time_has_come(work)){
 			rdy_works->enqueue(work);
 		}

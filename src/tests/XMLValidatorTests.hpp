@@ -20,8 +20,9 @@ private:
 public:
 	XMLValidatorTests();
 	virtual ~XMLValidatorTests();
-	void create_packet(int num_bytes, char* buff);
+	bool create_packet(int num_bytes, char* buff);
 	char* test_valid();
+	char* test_bad_xml();
 	char* test_invalid_packet_element();
 	char* test_without_upstream();
 	char* test_invalid_missions();

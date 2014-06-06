@@ -21,13 +21,21 @@ XMLValidator::XMLValidator() {
 	first_use = true;
 }
 
-void XMLValidator::buildPacket(const string& packet){
+bool XMLValidator::buildPacket(const string& packet){
 	vector<char> xml_copy(packet.begin(), packet.end());
 	xml_copy.push_back('\0');
 	if (!first_use)
 		root.clear();
-	root.parse<parse_declaration_node | parse_no_data_nodes>(&xml_copy[0]);
-	first_use = false;
+	try {
+		root.parse<parse_declaration_node | parse_no_data_nodes>(&xml_copy[0]);
+		first_use = false;
+	}
+	catch(rapidxml::parse_error &e)
+	{
+		printf("XML build packet failed - %s\n", e.what());
+		return false;
+	}
+	return true;
 }
 
 bool XMLValidator::validate(){

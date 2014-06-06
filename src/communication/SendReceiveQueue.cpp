@@ -30,18 +30,33 @@ SendReceiveQueue::SendReceiveQueue(){
 				&produced_count_id
 		);
 	assert( status == RTEMS_SUCCESSFUL );
+
+	size = 0;
 }
 
 void SendReceiveQueue::enqueue(string message){
 	rtems_status_code status;
+	bool should_release = false;
 	/* Semaphore not available, ensured to block */
 	status = rtems_semaphore_obtain(
 			mutex_id,
 			RTEMS_DEFAULT_OPTIONS,
 			RTEMS_NO_TIMEOUT
 	);
-	pending_messages.push(message);
-	status = rtems_semaphore_release( produced_count_id );
+	if (size < SEND_RECEIVE_QUEUE_SIZE){
+		pending_messages.push_back(message);
+		size++;
+		should_release = true;
+	}
+	else {
+		printf("WARNING::SendRecieve queue OVERFLOW! old messages will be overwritten\n");
+		pending_messages.pop_front();
+		pending_messages.push_back(message);
+	}
+
+	if (should_release){
+		status = rtems_semaphore_release( produced_count_id );
+	}
 	status = rtems_semaphore_release( mutex_id );
 }
 
@@ -58,8 +73,10 @@ string SendReceiveQueue::dequeue(){
 			RTEMS_DEFAULT_OPTIONS,
 			RTEMS_NO_TIMEOUT
 	);
+
 	string message = pending_messages.front();
-	pending_messages.pop();
+	pending_messages.pop_front();
+	size--;
 	status = rtems_semaphore_release( mutex_id );
 	return message;
 }

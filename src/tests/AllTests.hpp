@@ -12,10 +12,11 @@
 #include "minunit.h"
 #include "CMDParserTests.hpp"
 #include "TLMParserTests.hpp"
-#include "UartCommunicationHandlerTests.hpp"
 #include "XMLValidatorTests.hpp"
 #include "SendTests.hpp"
 #include "ReceiveTests.hpp"
+#include "WorkQueueTests.hpp"
+#include "SendReceiveQueueTests.hpp"
 
 #define ALL_TESTS					 	0xFFFF
 
@@ -34,9 +35,10 @@ private:
 	CMDParserTests::CMDParserTests cmdtests;
 	TLMParserTests::TLMParserTests tlmtests;
 	ReceiveTests::ReceiveTests rcvtests;
-	UartCommunicationHandlerTests::UartCommunicationHandlerTests chtests;
 	XMLValidatorTests::XMLValidatorTests validatortests;
 	SendTests::SendTests sendtests;
+	WorkQueueTests::WorkQueueTests workqueuetests;
+	SendReceiveQueueTests::SendReceiveQueueTests sendreceivequeuetests;
 public:
 	AllTests(int _type);
 	virtual ~AllTests();

@@ -12,12 +12,12 @@ class WorkDescription {
 private:
 	int code;
 	int priority;
-	//TODO: check which data structure should we store the timestamp
 	unsigned long long timestamp;
 	//TODO: add work params
 
 public:
 	WorkDescription ();
+	WorkDescription (int _code, int _priority, unsigned long long _time);
 	~WorkDescription(){}
 	void setCode(int _code);
 	int getCode();

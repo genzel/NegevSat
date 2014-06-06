@@ -15,13 +15,6 @@ Sample::Sample(string _name, string _time){
 	time = _time;
 }
 
-/*usage example:
- 	Sample::Sample sample("Temperature", "122");
-	map<string,string> measure;
-	measure.insert(pair<string,string>("voltage", "12"));
-	measure.insert(pair<string,string>("current", "1"));
-	sample.addMeasure("Battery1", measure);*/
-
 void Sample::addMeasure(string name, map<string,string> values){
 	measures.insert(pair<string,map<string,string> >(name,values));
 }

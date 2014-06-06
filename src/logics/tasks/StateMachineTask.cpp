@@ -24,7 +24,7 @@ TOPSTATE(Top) {
 
 	// Top state data (visible to all substates)
 	struct Box {
-		Box() : state(INIT_STATE) {}
+		Box() : state(INIT_STATE), counter(0) {}
 
 		void send_event(int type, int index) {
 			rtems_event_set out;
@@ -45,6 +45,7 @@ TOPSTATE(Top) {
 
 	private:
 		int state;
+		int counter;
 		rtemsEvent event;
 	};
 
@@ -61,7 +62,7 @@ private:
 // Satellite's initialize state
 SUBSTATE(InitState, Top) {
 	STATE(InitState)
-																void work();
+																								void work();
 private:
 	void init();
 };
@@ -71,7 +72,7 @@ private:
 SUBSTATE(Operational, Top) {
 	STATE(Operational)
 
-																		void work();
+																										void work();
 private:
 	void init();
 };
@@ -80,7 +81,7 @@ private:
 SUBSTATE(FacingGroundStation, Operational) {
 	STATE(FacingGroundStation)
 
-																									void work();
+																																	void work();
 
 private:
 	void init();
@@ -90,7 +91,7 @@ private:
 SUBSTATE(RegularOperations, Operational) {
 	STATE(RegularOperations)
 
-																											void work();
+																																			void work();
 
 private:
 	void init();
@@ -100,7 +101,7 @@ private:
 SUBSTATE(Safe, Top) {
 	STATE(Safe)
 
-																											void work();
+																																			void work();
 
 private:
 	void init();
@@ -110,7 +111,7 @@ private:
 SUBSTATE(Standby, Top) {
 	STATE(Standby)
 
-																											void work();
+																																			void work();
 
 private:
 	void init();
@@ -121,13 +122,13 @@ private:
 
 // Top state
 void Top::init() {
-	printf(" * StateMachine TASK:: TopState::init *\n");
+	//printf(" * StateMachine TASK:: TopState::init *\n");
 	setState<InitState>();
 }
 
 // InitState state
 void InitState::init() {
-	printf(" * StateMachine TASK:: InitState::init *\n");
+	printf(" * StateMachine TASK:: Entering Init State *\n");
 }
 
 void InitState::work() {
@@ -136,7 +137,7 @@ void InitState::work() {
 }
 // State Operational
 void Operational::init() {
-	printf(" * StateMachine TASK:: Operational::init *\n");
+	printf(" * StateMachine TASK:: Entering Operational State *\n");
 
 }
 void Operational::work(){
@@ -146,7 +147,7 @@ void Operational::work(){
 
 // State RegularOperations
 void RegularOperations::init() {
-	printf(" * StateMachine TASK:: RegularOperations::init *\n");
+	printf(" * StateMachine TASK:: Entering RegularOperations State *\n");
 	int i;
 	for (i=0; i < NUMBER_OF_ACTIVE_TASKS; i++){
 		TOP::box().send_event(REGULAR_OPS_STATE_EVENT, i);
@@ -154,20 +155,20 @@ void RegularOperations::init() {
 }
 
 void RegularOperations::work() {
-	printf(" * StateMachine TASK:: RegularOperations::work *\n");
+	//printf(" * StateMachine TASK:: RegularOperations::work *\n");
 	rtems_task_wake_after(
 			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
+	//printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
 	if (set != NO_EVENT_RECEIVED){
-		if (set & MOVE_TO_STANDBY_EVENT){
-			setState<Standby>();
-		}
-		if (set & RECEIVED_COMMUNICATION_EVENT){
-			setState<FacingGroundStation>();
-		}
 		if (set & MOVE_TO_SAFE_EVENT){
 			setState<Safe>();
+		}
+		else if (set & RECEIVED_COMMUNICATION_EVENT){
+			setState<FacingGroundStation>();
+		}
+		else if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
 		}
 	}
 
@@ -186,7 +187,7 @@ void RegularOperations::work() {
 
 // State FacingGroundStation
 void FacingGroundStation::init() {
-	printf(" * StateMachine TASK:: FacingGroundStation::init *\n");
+	printf(" * StateMachine TASK:: Entering FacingGroundStation State *\n");
 	int i;
 	for (i=0; i < NUMBER_OF_ACTIVE_TASKS; i++){
 		TOP::box().send_event(FACING_GROUND_STATE_EVENT, i);
@@ -194,20 +195,20 @@ void FacingGroundStation::init() {
 }
 
 void FacingGroundStation::work() {
-	printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
+	//printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
 	rtems_task_wake_after(
 			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
-	printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
+	//printf(" * StateMachine TASK:: set received: %d *\n", (int)set);
 	if (set != NO_EVENT_RECEIVED){
-		if (set & MOVE_TO_STANDBY_EVENT){
-			setState<Standby>();
-		}
-		if (set & LOST_COMMUNICATION_EVENT){
-			setState<RegularOperations>();
-		}
 		if (set & MOVE_TO_SAFE_EVENT){
 			setState<Safe>();
+		}
+		else if (set & LOST_COMMUNICATION_EVENT){
+			setState<RegularOperations>();
+		}
+		else if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
 		}
 	}
 
@@ -226,7 +227,7 @@ void FacingGroundStation::work() {
 
 // State Safe
 void Safe::init() {
-	printf(" * StateMachine TASK:: Safe::init *\n");
+	printf(" * StateMachine TASK:: Entering Safe State *\n");
 	int i;
 	for (i=0; i < NUMBER_OF_ACTIVE_TASKS; i++){
 		TOP::box().send_event(SAFE_STATE_EVENT, i);
@@ -234,16 +235,16 @@ void Safe::init() {
 }
 
 void Safe::work() {
-	printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
+	//printf(" * StateMachine TASK:: FacingGroundStation::work *\n");
 	rtems_task_wake_after(
 			2 * 5 * rtems_clock_get_ticks_per_second());
 	rtems_event_set set = TOP::box().receive_event();
 	if (set != NO_EVENT_RECEIVED){
-		if (set & MOVE_TO_STANDBY_EVENT){
-			setState<Standby>();
-		}
 		if (set & MOVE_TO_OP_EVENT){
 			setState<Operational>();
+		}
+		else if (set & MOVE_TO_STANDBY_EVENT){
+			setState<Standby>();
 		}
 	}
 	/*switch (set){
@@ -258,7 +259,7 @@ void Safe::work() {
 
 // State Standby
 void Standby::init() {
-	printf(" * StateMachine TASK:: Standby::init *\n");
+	printf(" * StateMachine TASK:: Entering Standby State *\n");
 	int i;
 	for (i=0; i < NUMBER_OF_ACTIVE_TASKS; i++){
 		TOP::box().send_event(STANDBY_STATE_EVENT, i);

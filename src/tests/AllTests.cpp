@@ -18,6 +18,7 @@ AllTests::~AllTests() {
 }
 
 char* AllTests::all_tests(){
+
 	if (type_tests & CMD_PARSER_TESTS)
 		mu_run_test(cmdtests.runTests);
 	if (type_tests & TLM_PARSER_TESTS)
@@ -28,6 +29,11 @@ char* AllTests::all_tests(){
 		mu_run_test(rcvtests.runTests);
 	if (type_tests & VALIDATOR_TESTS)
 		mu_run_test(validatortests.runTests);
+	if (type_tests & WORK_QUEUE_TESTS)
+		mu_run_test(workqueuetests.runTests);
+	if (type_tests & SEND_RECEIVE_TESTS)
+		mu_run_test(sendreceivequeuetests.runTests);
+
 	return 0;
 }
 

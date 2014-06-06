@@ -20,9 +20,9 @@ XMLValidatorTests::~XMLValidatorTests() {
 	// TODO Auto-generated destructor stub
 }
 
-void XMLValidatorTests::create_packet(int num_bytes, char* buff){
+bool XMLValidatorTests::create_packet(int num_bytes, char* buff){
 	string packetstr(buff, num_bytes);
-	validator->buildPacket(packetstr);
+	return validator->buildPacket(packetstr);
 }
 
 char* XMLValidatorTests::test_valid(){
@@ -34,9 +34,22 @@ char* XMLValidatorTests::test_valid(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(296, packet);
+	mu_assert("error, build packet fail", create_packet(296, packet));
 	mu_assert("error, validate failed", validator->validate());
 	return 0;
+}
+
+char* XMLValidatorTests::test_bad_xml(){
+	char packet[] = "<?xml version='1.0'?>"
+				"<packet>"
+				"<upstreamPacket time='20140531165730'>"
+				"<mission opcode='5' priority='3' time='20140531165740'/>"
+				"<mission opcode='4' priority='2' time='20140531165750'/>"
+				"<mission opcode='2' priority='1' time='20140531165755'/>"
+				"</upstreamPacket>"
+				"</pa";
+		mu_assert("error, build packet should fail", !create_packet(291, packet));
+		return 0;
 }
 
 char* XMLValidatorTests::test_invalid_packet_element(){
@@ -49,7 +62,7 @@ char* XMLValidatorTests::test_invalid_packet_element(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet1>";
-	create_packet(298,packet);
+	mu_assert("error, build packet fail", create_packet(298, packet));
 	mu_assert("error, validate should fail failed", !validator->validate());
 	return 0;
 }
@@ -64,7 +77,7 @@ char* XMLValidatorTests::test_without_upstream(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacke>"
 			"</packet>";
-	create_packet(294,packet);
+	mu_assert("error, build packet fail", create_packet(294, packet));
 	mu_assert("error, validate should fail failed", !validator->validate());
 	return 0;
 }
@@ -80,7 +93,7 @@ char* XMLValidatorTests::test_invalid_missions(){
 			"<mission3 opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(299,packet);
+	mu_assert("error, build packet fail", create_packet(299, packet));
 	mu_assert("error, validate should fail failed", !validator->validate());
 
 	// test2
@@ -89,7 +102,7 @@ char* XMLValidatorTests::test_invalid_missions(){
 			"<upstreamPacket time='20140531165730'>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(118,packet2);
+	mu_assert("error, build packet fail", create_packet(118, packet2));
 	mu_assert("error, validate should fail", !validator->validate());
 
 	//test3
@@ -101,7 +114,7 @@ char* XMLValidatorTests::test_invalid_missions(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(285,packet3);
+	mu_assert("error, build packet fail", create_packet(285, packet3));
 	mu_assert("error, validate should fail", !validator->validate());
 
 	//test4
@@ -113,7 +126,7 @@ char* XMLValidatorTests::test_invalid_missions(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(274,packet4);
+	mu_assert("error, build packet fail", create_packet(274, packet4));
 	mu_assert("error, validate should fail", !validator->validate());
 	return 0;
 }
@@ -130,7 +143,7 @@ char* XMLValidatorTests::test_many_elements(){
 			"</packet>"
 			"<packet>"
 			"</packet>";
-	create_packet(323, packet);
+	mu_assert("error, build packet fail", create_packet(323, packet));
 	mu_assert("error, validate should fail", !validator->validate());
 
 	char packet2[] = "<?xml version='1.0'?>"
@@ -146,7 +159,7 @@ char* XMLValidatorTests::test_many_elements(){
 			"<mission opcode='2' priority='1' time='20140531165755'/>"
 			"</upstreamPacket>"
 			"</packet>";
-	create_packet(544, packet2);
+	mu_assert("error, build packet fail", create_packet(544, packet2));
 	mu_assert("error, validate should fail", !validator->validate());
 
 	return 0;
@@ -156,6 +169,11 @@ char* XMLValidatorTests::runTests(){
 	char* test_valid_res = test_valid();
 	if (test_valid_res!= 0){
 		return test_valid_res;
+	}
+
+	char* test_bad_xml_res =  test_bad_xml();
+	if (test_bad_xml_res!= 0){
+		return test_bad_xml_res;
 	}
 
 	char* test_test_invalid_packet_element_res = test_invalid_packet_element();

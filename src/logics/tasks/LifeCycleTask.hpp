@@ -48,7 +48,7 @@ public:
 	void control_unit_samples();
 	void control_algorithmics();
 	void control_command();
-	void attitude_control();
+	void attitude_control(int counter);
 	void logics();
 	void perform_cmd();
 	void monitoring();

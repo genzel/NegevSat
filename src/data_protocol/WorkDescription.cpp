@@ -13,6 +13,12 @@ WorkDescription::WorkDescription(){
 
 }
 
+WorkDescription::WorkDescription (int _code, int _priority, unsigned long long _time){
+	code = _code;
+	priority = _priority;
+	timestamp = _time;
+}
+
 void WorkDescription::setCode(int _code){
 	code = _code;
 }

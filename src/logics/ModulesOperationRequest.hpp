@@ -29,6 +29,10 @@ public:
 		payload_request = NO_CHANGE;
 		sband_request = NO_CHANGE;
 		thermal_ctrl_request = NO_CHANGE;
+
+		set_temp_request = NO_CHANGE;
+		set_energy_request = NO_CHANGE;
+		connected_request = NO_CHANGE;
 	}
 
 	void request_payload(int action){

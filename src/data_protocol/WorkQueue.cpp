@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <assert.h>
 #include "data_protocol/CMDDictionary.hpp"
+#include <stdio.h>
+
 
 using namespace std;
 
@@ -17,12 +19,14 @@ bool workComparator (WorkDescription::WorkDescription i,WorkDescription::WorkDes
 }
 
 WorkQueue::WorkQueue(){
-	/*works.reserve(100);*/
+	works.reserve(QUEUE_SIZE);
+	size = 0;
+
 	rtems_status_code status;
 	// create semaphore with 1 permit
 	status = rtems_semaphore_create(
 			rtems_build_name( 'W', 'K', 'Q', '1' ),
-			1,   /*created locked*/
+			1,
 			RTEMS_DEFAULT_ATTRIBUTES,
 			0,
 			&mutex_id
@@ -36,6 +40,7 @@ WorkQueue::WorkQueue(){
 			&produced_count_id
 	);
 	assert( status == RTEMS_SUCCESSFUL );
+
 }
 
 void WorkQueue::sortWorks(){
@@ -44,15 +49,25 @@ void WorkQueue::sortWorks(){
 
 void WorkQueue::enqueue(WorkDescription::WorkDescription work){
 	rtems_status_code status;
+	bool should_release = false;
 	// Semaphore not available, ensured to block
 	status = rtems_semaphore_obtain(
 			mutex_id,
 			RTEMS_DEFAULT_OPTIONS,
 			RTEMS_NO_TIMEOUT
 	);
-	works.push_back(work);
-	sortWorks();
-	status = rtems_semaphore_release( produced_count_id );
+	if (size < QUEUE_SIZE){
+		works.push_back(work);
+		size++;
+		should_release = true;
+	}
+	else {
+		works.erase(works.begin());
+		works.push_back(work);
+	}
+	//sortWorks();
+	if (should_release)
+		status = rtems_semaphore_release( produced_count_id );
 	status = rtems_semaphore_release( mutex_id );
 }
 
@@ -90,6 +105,7 @@ WorkDescription::WorkDescription WorkQueue::dequeue(bool block){
 
 	WorkDescription::WorkDescription work = works.back();
 	works.pop_back();
+	size--;
 	status = rtems_semaphore_release( mutex_id );
 	return work;
 }

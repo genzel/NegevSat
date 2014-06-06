@@ -58,9 +58,12 @@ void SendTask::obtain_state(){
 	//printf(" * SendTask TASK:: obtain_state *\n");
 	rtemsEvent event;
 	rtems_event_set out;
-	rtems_status_code status = event.receive(REGULAR_OPS_STATE_EVENT | FACING_GROUND_STATE_EVENT, out, 0, rtemsEvent::no_wait, rtemsEvent::any);
+	rtems_status_code status = event.receive(REGULAR_OPS_STATE_EVENT | FACING_GROUND_STATE_EVENT | STANDBY_STATE_EVENT, out, 0, rtemsEvent::no_wait, rtemsEvent::any);
 	if (status == RTEMS_SUCCESSFUL){
 		printf(" * SEND TASK:: changed state to %d *\n", (int)out);
+		if (out & STANDBY_STATE_EVENT){
+			connected = false;
+		}
 		if (out & REGULAR_OPS_STATE_EVENT){
 			connected = false;
 		}
@@ -84,7 +87,7 @@ rtems_task SendTask::body(rtems_task_argument argument){
 	for (;;){
 		printf(" * SEND TASK! *\n");
 		rtems_task_wake_after(
-				2 * 5 * rtems_clock_get_ticks_per_second());
+				1 * 2 * rtems_clock_get_ticks_per_second());
 		obtain_state();
 		obtain_send_type();
 		if (connected){
@@ -94,7 +97,7 @@ rtems_task SendTask::body(rtems_task_argument argument){
 			case STATIC_SEND:
 				printf(" * SEND TASK:: type of send is STATIC_SEND *\n");
 				packet = sendQueues[SENDQ_STATIC_INDEX]->dequeue();
-				printf("packet to send : %s\n", &packet[0]);
+				//printf("packet to send : %s\n", &packet[0]);
 				send(packet);
 				break;
 			case ENERGY_SEND:

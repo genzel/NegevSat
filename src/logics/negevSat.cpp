@@ -54,7 +54,7 @@ using namespace stringutils;
 using namespace timeutils;
 using namespace std;
 
-bool tests = true;
+bool tests = false;
 
 rtemsTask::rtemsTask* task_table[NUMBER_OF_TASKS];
 rtems_time_of_day current_time;
@@ -62,10 +62,10 @@ rtems_time_of_day current_time;
 //TODO check out automatically set those constants
 #define TIME_YEAR		2014
 #define TIME_MONTH		6
-#define TIME_DAY		4
-#define TIME_HOUR		16
-#define TIME_MINUTE		46
-#define TIME_SECONDS	30
+#define TIME_DAY		6
+#define TIME_HOUR		12
+#define TIME_MINUTE		17
+#define TIME_SECONDS	20
 
 void set_time(){
 	current_time.day = TIME_DAY;
@@ -92,7 +92,7 @@ rtems_task Init(rtems_task_argument )
 	set_time();
 
 	if(tests){
-		AllTests::AllTests tests(/*CMD_PARSER_TESTS*/ TLM_PARSER_TESTS /*SEND_TESTS*/ /*RECEIVE_TESTS*//*VALIDATOR_TESTS*/);
+		AllTests::AllTests tests(/*CMD_PARSER_TESTS*/ /*TLM_PARSER_TESTS*/ /*SEND_TESTS*/ /*RECEIVE_TESTS*//*VALIDATOR_TESTS*/ /*WORK_QUEUE_TESTS*/ SEND_RECEIVE_TESTS);
 		tests.run_all_tests();
 	}
 

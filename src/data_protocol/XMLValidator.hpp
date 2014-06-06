@@ -21,7 +21,7 @@ private:
 public:
 	XMLValidator ();
 	~XMLValidator(){}
-	void buildPacket(const string& packet);
+	bool buildPacket(const string& packet);
 	bool validate();
 	void* getRoot();
 };

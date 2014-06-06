@@ -17,6 +17,8 @@ using namespace std;
 
 using namespace std;
 
+#define QUEUE_SIZE			512
+
 class WorkQueue {
 
 private:
@@ -24,6 +26,8 @@ private:
 	vector<WorkDescription::WorkDescription> works;
 	rtems_id mutex_id;
 	rtems_id produced_count_id;
+	int size;
+
 public:
 	WorkQueue();
 	~WorkQueue(){}
