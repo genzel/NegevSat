@@ -1,6 +1,6 @@
 Instructions to run the simulator: <br>
 <br>
-1. Please download java v8 32 bit <br>
+1. Download java v8 32 bit <br>
 2. Set an environment variable JAVA_HOME to point on that java <br>
 3. Download these files (Serial Communication jars for java) <br>
 [RXTXcomm.jar] (https://dl.dropboxusercontent.com/u/69956658/project-NegevSat/jars/RXTXcomm.jar) <br>
