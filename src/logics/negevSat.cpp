@@ -25,7 +25,7 @@
 #define CONFIGURE_MAXIMUM_REGIONS             		TEST_AMOUNT
 #define CONFIGURE_MAXIMUM_PERIODS            	 	TEST_AMOUNT
 #define CONFIGURE_MAXIMUM_USER_EXTENSIONS    		TEST_AMOUNT
-#define CONFIGURE_MICROSECONDS_PER_TICK   			20000 /* 20 millisecond */
+#define CONFIGURE_MICROSECONDS_PER_TICK   			10000 /* 20 millisecond */
 #define CONFIGURE_TICKS_PER_TIMESLICE       		10 /* 100 milliseconds */
 #define CONFIGURE_MAXIMUM_POSIX_MUTEXES      		TEST_AMOUNT
 #define CONFIGURE_LIBIO_MAXIMUM_FILE_DESCRIPTORS 	TEST_AMOUNT
@@ -62,10 +62,10 @@ rtems_time_of_day current_time;
 //TODO check out automatically set those constants
 #define TIME_YEAR		2014
 #define TIME_MONTH		6
-#define TIME_DAY		6
-#define TIME_HOUR		12
-#define TIME_MINUTE		17
-#define TIME_SECONDS	20
+#define TIME_DAY		18
+#define TIME_HOUR		10
+#define TIME_MINUTE		22
+#define TIME_SECONDS	30
 
 void set_time(){
 	current_time.day = TIME_DAY;

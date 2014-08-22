@@ -27,7 +27,7 @@ UartCommunicationHandler::UartCommunicationHandler(){
 
 bool UartCommunicationHandler::send(char* buffer, int length){
 
-	printf ("*** opening uart ***\n");
+	//printf ("*** opening uart ***\n");
 
 	int fd = open("/dev/console_b", O_RDWR | O_NOCTTY | _FNDELAY);
 
@@ -35,7 +35,7 @@ bool UartCommunicationHandler::send(char* buffer, int length){
 		return false;
 	}
 
-	printf("Opened COM1, fd=%d\n\n", fd);
+	//printf("Opened COM1, fd=%d\n\n", fd);
 
 	int numBytes = write(fd, buffer, length);
 
@@ -44,6 +44,7 @@ bool UartCommunicationHandler::send(char* buffer, int length){
 		return false;
 		//TODO: add exception handling
 	}
+	printf ("\nSending Data...\n");
 	close(fd);
 	return true;
 }
@@ -67,6 +68,7 @@ string UartCommunicationHandler::receive(){
 	else {
 		buffer[numBytes] = 0; // terminate
 	}
+	printf ("\nReceiving data...\n");
 	close(fd);
 	string data(buffer, numBytes+1);
 	return data;

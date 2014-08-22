@@ -10,9 +10,9 @@
 
 #include <rtems++/rtemsTask.h>
 
-//tasks
+//Tasks Constants
 #define NUMBER_OF_TASKS					6
-#define NUMBER_OF_PASSIVE_TASKS			1
+#define NUMBER_OF_PASSIVE_TASKS			1 // passive means not receiving events from the state machine task
 #define NUMBER_OF_ACTIVE_TASKS			NUMBER_OF_TASKS - NUMBER_OF_PASSIVE_TASKS
 
 #define SEND_TASK_INDEX					0

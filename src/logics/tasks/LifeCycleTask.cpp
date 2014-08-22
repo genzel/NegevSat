@@ -234,6 +234,10 @@ void LifeCycleTask::module_ctrl(){
 	// XXX SIMULATOR FIELDS XXX
 	rtemsEvent event;
 	rtems_event_set out;
+
+	int high_temp = 50;
+	int low_en = 0;
+
 	if (modules_request.get_request_connected() == TURN_ON){
 		out = RECEIVED_COMMUNICATION_EVENT;
 		event.send(*(task_table[STATE_MACHINE_TASK_INDEX]),out);
@@ -245,11 +249,11 @@ void LifeCycleTask::module_ctrl(){
 		modules_request.request_connected(NO_CHANGE);
 	}
 	if (modules_request.get_request_set_energy() == TURN_ON){
-		hardware.setEnergy(0);
+		hardware.setEnergy(low_en);
 		modules_request.request_set_energy(NO_CHANGE);
 	}
 	if (modules_request.get_request_set_temp() == TURN_ON){
-		hardware.setTemperature(45);
+		hardware.setTemperature(high_temp);
 		modules_request.request_set_temp(NO_CHANGE);
 	}
 }
@@ -258,15 +262,19 @@ void LifeCycleTask::thermal_ctrl(){
 	//printf(" * LifeCycle TASK:: thermal ctrl *\n");
 	if (hardware.getTemperatureStatus() == MODULE_MALFUNCTION){
 		printf(" * LifeCycle TASK:: thermal ctrl - module malfunction *\n");
+		hardware.setThermalControlStatus(MODULE_ON);
 		int temp = hardware.getTemperature(false);
 		temp--;
 		hardware.setTemperature(temp);
 		printf(" * LifeCycle TASK:: thermal ctrl - temp is now: %d *\n", temp);
 	}
+	else if (hardware.getTemperatureStatus() == MODULE_ON){
+		hardware.setThermalControlStatus(MODULE_STANDBY);
+	}
 }
 
 void LifeCycleTask::body(rtems_task_argument argument){
-	// TODO pay attention and act differently on each state using events
+	// TODO refactor each function into object
 	int count = 0;
 	for (;;){
 		//printf(" * LifeCycle TASK! *\n");
@@ -278,8 +286,8 @@ void LifeCycleTask::body(rtems_task_argument argument){
 		monitoring();
 		module_ctrl(); // turn on or off modules
 		thermal_ctrl();
-		count++;
-		count = count % 5;
+		count++; // this counter can be removed/modified - used to delay to samples rate (1/3 rounds)
+		count = count % 3;
 		/*}*/
 	}
 	exit(0);

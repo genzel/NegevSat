@@ -55,7 +55,7 @@ rtems_task ReceiveTask::body(rtems_task_argument argument){
 	for(;;) {
 		printf(" * RECEIVE TASK! *\n");
 		rtems_task_wake_after(
-				1 * 5 * rtems_clock_get_ticks_per_second());
+				1 * 2 * rtems_clock_get_ticks_per_second());
 		//obtain_state();
 		string msg = receive();
 		if (comm_handler->verifyBytes(msg)){

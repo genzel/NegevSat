@@ -38,7 +38,6 @@ void MPTask::enqueueToWorks(WorkDescription::WorkDescription work){
 }
 
 void MPTask::body(rtems_task_argument argument){
-	unsigned int i;
 	for (;;){
 		printf(" * MP TASK! *\n");
 		string packet = receive_queue->dequeue();
@@ -48,7 +47,7 @@ void MPTask::body(rtems_task_argument argument){
 		}
 		if (validateMessage()){
 			vector<WorkDescription::WorkDescription> parsed_works = parseMessage();
-			for (i=0; i<parsed_works.size(); i++){
+			for (unsigned int i=0; i<parsed_works.size(); i++){
 				enqueueToWorks(parsed_works.at(i));
 			}
 		}

@@ -21,7 +21,7 @@
 #include "logics/Sampler.hpp"
 #include "logics/ModulesOperationRequest.hpp"
 
-#define MAX_SAMPLES 	10
+#define MAX_SAMPLES 	5
 
 using namespace std;
 

@@ -36,6 +36,7 @@ using namespace std;
 
 class HardwareState {
 private:
+	//TODO change static type to HWModule
 	TemperatureModule::TemperatureModule temperature;
 	EnergyModule::EnergyModule energy;
 	SbandModule::SbandModule sband;
